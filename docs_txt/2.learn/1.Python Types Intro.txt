@@ -1,0 +1,10 @@
+Python has support for optional "type hints" (also called "type annotations")
+    def get_full_name(first_name, last_name)            --> No
+    def get_full_name(first_name: str, last_name: str)  --> Yes
+
+Pydantic models
+    You declare the "shape" of the data as classes with attributes
+    Type Hints with Metadata Annotations
+        from typing import Annotated
+        def say_hello(name: Annotated[str, "this is just metadata"]) -> str:
+            The important thing to remember is that the first type parameter you pass to Annotated is the actual type. The rest, is just metadata for other tools

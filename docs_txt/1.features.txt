@@ -1,0 +1,35 @@
+FastAPI features
+    Based on open standards
+        OpenAPI
+
+    Automatic docs
+        Swagger and Redoc
+
+    Just Modern Python
+        It's all based on standard Python type declarations (thanks to Pydantic)
+
+    Editor support
+        Autocompletion works everywhere
+
+    Short
+        It has sensible defaults for everything, with optional configurations everywhere
+
+    Validation
+        All the validation is handled by the well-established and robust Pydantic
+
+    Security and authentication
+
+    Dependency Injection
+
+    Unlimited "plug-ins"
+        Import and use the code you need.
+
+    Tested
+
+Starlette features
+    FastAPI is actually a sub-class of Starlette
+
+Pydantic features
+    This also means that in many cases you can pass the same object you get from a request directly to the database, as everything is validated automatically
+    No brainfuck: If you know Python types you know how to use Pydantic
+    
