@@ -1,0 +1,8 @@
+Example of Concurrent Burgers --> Concurrency 
+    You and your crush, order, go for a sit, talk (while waiting), get burgers, eat
+
+Parallel Burgers --> Parallelism 
+    Cashier that prepared to burger (Do the whole work) -> This is "synchronous" work
+
+Coroutine
+    Coroutine is just the very fancy term for the thing returned by an async def function
