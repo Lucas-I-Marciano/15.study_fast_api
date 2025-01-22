@@ -1,0 +1,10 @@
+A virtual environment is a directory with some files in it
+
+What Does Activating a Virtual Environment Mean
+    .venv\Scripts\Activate.ps1
+        That command will create or modify some environment variables that will be available for the next commands.
+        One of those variables is the PATH variable
+            C:\Windows\System32 --> C:\...\studyFastApi\venv\Scripts\python.exe
+
+Checking a Virtual Environment
+    Get-Command python
