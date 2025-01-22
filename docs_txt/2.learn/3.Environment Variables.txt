@@ -1,0 +1,7 @@
+PATH Environment Variable
+    Find programs to run
+    PATH=C:\Program Files\Python312\Scripts;C:\Program Files\Python312;C:\Windows\System32
+        This means that the system should look for programs in the directories:
+            C:\Program Files\Python312\Scripts
+            C:\Program Files\Python312
+            C:\Windows\System32
