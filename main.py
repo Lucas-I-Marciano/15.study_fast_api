@@ -77,4 +77,4 @@ class ItemName(BaseModel):
 
 @app.post("/items/")
 async def create_item(item:ItemName): # Declaring as a type of ItemName class that inherits from BaseModel, FastAPI will Read the body of the request as JSON|Validate the data|
-    return {**item.model_dump(), "price_with_tax":item.price + item.tax}
+    return {**item.model_dump(exclude=['tax']), "price_with_tax":item.price + item.tax} # model_dump() is a modernized method of .dict()
