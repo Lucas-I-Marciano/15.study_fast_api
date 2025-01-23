@@ -28,3 +28,12 @@ def update_item(item_id:int, item:Item):
         "item_price": item.price,
         "item_id": item_id
     }
+
+
+@app.get("/users/{user_id}")
+def read_user(user_id :str):
+    return {"user_id": user_id}
+
+@app.get("/users/me")
+def read_user_me():
+    return {"user_id": "the current user"}
