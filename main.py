@@ -85,7 +85,7 @@ from fastapi import Query
 from typing import Annotated
 
 @app.get('/query_validator/')
-def read_query(q: Annotated[str|None, Query(max_length=50)] = None):
+def read_query(q: Annotated[str|None, Query(max_length=50, min_length=5)] = None):
     results = {"items" : [{"item_id": "Foo"}, {"item_id": "Bar"}]}
     if q:
         results.update({"q": q})
