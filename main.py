@@ -28,3 +28,36 @@ def update_item(item_id:int, item:Item):
         "item_price": item.price,
         "item_id": item_id
     }
+
+@app.get("/users/me")
+def read_user_me():
+    return {"user_id": "the current user"}
+
+@app.get("/users/{user_id}")
+def read_user(user_id :str):
+    return {"user_id": user_id}
+
+from enum import Enum
+
+class ModelName(str, Enum):
+    #<name> = <value>
+    alexnet = "Alexnet"
+    resnet = "Resnet"
+    lenet = "Lenet"
+
+print(ModelName.alexnet.name)  # -> alexnet
+print(ModelName.alexnet.value) # -> Alexnet
+
+@app.get("/models/{model_name}")
+async def get_model(model_name : ModelName):
+    if model_name is ModelName.alexnet:
+        return {"model_name": model_name, "message": "Deep Learning FTW!"}
+
+    if model_name.value == "Lenet": 
+        return {"model_name": model_name, "message": "LeCNN all the images"}
+
+    return {"model_name": model_name, "message": "Have some residuals"}
+
+@app.get("/files/{file_path:path}")
+def get_file(file_path:str):
+    return {"path" : file_path}
