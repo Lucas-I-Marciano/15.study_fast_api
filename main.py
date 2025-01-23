@@ -78,3 +78,15 @@ class ItemName(BaseModel):
 @app.post("/items/")
 async def create_item(item:ItemName): # Declaring as a type of ItemName class that inherits from BaseModel, FastAPI will Read the body of the request as JSON|Validate the data|
     return {**item.model_dump(exclude=['tax']), "price_with_tax":item.price + item.tax} # model_dump() is a modernized method of .dict()
+
+## Query Parameters and String Validations
+
+from fastapi import Query
+from typing import Annotated
+
+@app.get('/query_validator/')
+def read_query(q: Annotated[str | None, Query(max_length=50)] = None):
+    results = {"items" : [{"item_id": "Foo"}, {"item_id": "Bar"}]}
+    if q:
+        results.update({"q": q})
+    return results
