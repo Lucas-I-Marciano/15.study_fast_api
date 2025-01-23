@@ -68,3 +68,13 @@ async def read_user_item(
 ): # needy has to be the values of eNum, not name --> 'http://127.0.0.1:8000/items/query_p_enum/AN1322?needy=Alexnet&skip=0'
     item = {"item_id": item_id, "needy": needy, "skip": skip, "limit": limit}
     return item
+
+class ItemName(BaseModel):
+    name: str
+    description: str | None = None
+    price: float
+    tax: float | None = None
+
+@app.post("/items/")
+async def create_item(item:ItemName): # Declaring as a type of ItemName class that inherits from BaseModel, FastAPI will Read the body of the request as JSON|Validate the data|
+    return {**item.model_dump(), "price_with_tax":item.price + item.tax}
