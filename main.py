@@ -45,6 +45,9 @@ class ModelName(str, Enum):
     resnet = "Resnet"
     lenet = "Lenet"
 
+print(ModelName.alexnet.name)  # -> alexnet
+print(ModelName.alexnet.value) # -> Alexnet
+
 @app.get("/models/{model_name}")
 async def get_model(model_name : ModelName):
     if model_name is ModelName.alexnet:
