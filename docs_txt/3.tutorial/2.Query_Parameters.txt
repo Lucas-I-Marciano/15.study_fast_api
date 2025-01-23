@@ -1,0 +1,5 @@
+Query Parameters
+    Query parameter type conversion
+        async def read_item(item_id: str, q: str | None = None, short: bool = False)
+        You can define short as (1, True, true, on, yes...)
+    when you want to make a query parameter required, you can just not declare any default value

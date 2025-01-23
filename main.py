@@ -61,3 +61,10 @@ async def get_model(model_name : ModelName):
 @app.get("/files/{file_path:path}")
 def get_file(file_path:str):
     return {"path" : file_path}
+
+@app.get("/items/query_p_enum/{item_id}")
+async def read_user_item(
+    item_id: str, needy: ModelName, skip: int = 0, limit: int | None = None
+): # needy has to be the values of eNum, not name --> 'http://127.0.0.1:8000/items/query_p_enum/AN1322?needy=Alexnet&skip=0'
+    item = {"item_id": item_id, "needy": needy, "skip": skip, "limit": limit}
+    return item
