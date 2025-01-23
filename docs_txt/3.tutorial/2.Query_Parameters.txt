@@ -13,3 +13,12 @@ Request Body
         async def update_item(
             item_id: int, item: Item, user: User, importance: Annotated[int, Body()]
         ):
+
+Query Parameters and String Validations
+    At a glance, using Query class from fastapi
+        def read_items(q: Annotated[str | None, Query(max_length=50)] = None)
+        def read_items(q: str | None = Query(default=None, max_length=50))
+    
+    Query parameter list / multiple values
+        def read_items(q: Annotated[list[str] | None, Query()] = None)
+            url: http://localhost:8000/items/?q=foo&q=bar
