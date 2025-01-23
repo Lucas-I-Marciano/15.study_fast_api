@@ -90,3 +90,7 @@ def read_query(q: Annotated[str|None, Query(max_length=50, min_length=5, pattern
     if q:
         results.update({"q": q})
     return results
+
+@app.get('/query_list/')
+def read_query_list(q: Annotated[None | list[str], Query()]):
+    return {"q" : q}
