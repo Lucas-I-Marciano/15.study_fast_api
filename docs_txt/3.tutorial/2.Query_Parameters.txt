@@ -3,3 +3,13 @@ Query Parameters
         async def read_item(item_id: str, q: str | None = None, short: bool = False)
         You can define short as (1, True, true, on, yes...)
     when you want to make a query parameter required, you can just not declare any default value
+
+Request Body
+    If the parameter is also declared in the path, it will be used as a path parameter.
+    If the parameter is of a singular type (like int, float, str, bool, etc) it will be interpreted as a query parameter.
+    If the parameter is declared to be of the type of a Pydantic model, it will be interpreted as a request body.
+    Or I could do it explicit as a Body
+        from typing import Annotated
+        async def update_item(
+            item_id: int, item: Item, user: User, importance: Annotated[int, Body()]
+        ):
