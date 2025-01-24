@@ -111,11 +111,13 @@ def read_query_list(
     return result
 
 from pydantic import Field
+from typing import Literal
+
 class QueryParamValidator(BaseModel):
     limit: int = Field(default=100, le=100, ge=0)
     off_set: int = Field(default=0, le=10, ge=0)
     tags: list[str] = []
-    order_by: ModelName 
+    order_by: Literal["tags", "created_at"] = "created_at" 
 
 @app.get('/query-params-validator/')
 def query_params_validator(
