@@ -91,8 +91,10 @@ def read_query(q: Annotated[str|None, Query(max_length=50, min_length=5, pattern
         results.update({"q": q})
     return results
 
-@app.get('/query_list/')
+from fastapi import Path
+@app.get('/query_list/{size}/')
 def read_query_list(
+    size: Annotated[float, Path(le=20.5, ge=0, title="Size of list", description="Variable to handle with # of items")],
     q: 
         Annotated[None | list[str], Query(
             title="Query parameters as list", 
@@ -100,5 +102,9 @@ def read_query_list(
             alias="q-item", # alias for my 'q' parameter --> http://127.0.0.1:8000/query_list/?q-item=foo&q-item=bar
             deprecated=True
         )] = ['foo', 'bar'],
-    hidden_query: Annotated[str | None, Query(include_in_schema=False)] = None):
-    return {"q" : q}
+    hidden_query: Annotated[str | None, Query(include_in_schema=False)] = None,
+    ):
+    result = {"q" : q}
+    if size>0 :
+        result.update({"size":size})
+    return result
