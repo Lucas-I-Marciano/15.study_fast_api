@@ -114,6 +114,7 @@ from pydantic import Field
 from typing import Literal
 
 class QueryParamValidator(BaseModel):
+    model_config = {"extra":"forbid"} # It will forbid: http://127.0.0.1:8000/query-params-validator2/?limit=100&off_set=0&order_by=created_at&tool=hammer, because of tool=hammer
     limit: int = Field(default=100, le=100, ge=0)
     off_set: int = Field(default=0, le=10, ge=0)
     tags: list[str] = []
