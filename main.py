@@ -109,3 +109,20 @@ def read_query_list(
     if size>0 :
         result.update({"size":size})
     return result
+
+from pydantic import Field
+class QueryParamValidator(BaseModel):
+    limit: int = Field(default=100, le=100, ge=0)
+    off_set: int = Field(default=0, le=10, ge=0)
+
+@app.get('/query-params-validator/')
+def query_params_validator(
+    query: Annotated[QueryParamValidator, Query()]
+):
+    return query
+
+@app.get('/query-params-validator2/')
+def query_params_validator2(
+    query2: Annotated[QueryParamValidator, Query()]
+):
+    return query2
