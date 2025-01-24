@@ -61,3 +61,44 @@ async def get_model(model_name : ModelName):
 @app.get("/files/{file_path:path}")
 def get_file(file_path:str):
     return {"path" : file_path}
+
+@app.get("/items/query_p_enum/{item_id}")
+async def read_user_item(
+    item_id: str, needy: ModelName, skip: int = 0, limit: int | None = None
+): # needy has to be the values of eNum, not name --> 'http://127.0.0.1:8000/items/query_p_enum/AN1322?needy=Alexnet&skip=0'
+    item = {"item_id": item_id, "needy": needy, "skip": skip, "limit": limit}
+    return item
+
+class ItemName(BaseModel):
+    name: str
+    description: str | None = None
+    price: float
+    tax: float | None = None
+
+@app.post("/items/")
+async def create_item(item:ItemName): # Declaring as a type of ItemName class that inherits from BaseModel, FastAPI will Read the body of the request as JSON|Validate the data|
+    return {**item.model_dump(exclude=['tax']), "price_with_tax":item.price + item.tax} # model_dump() is a modernized method of .dict()
+
+## Query Parameters and String Validations
+
+from fastapi import Query
+from typing import Annotated
+
+@app.get('/query_validator/')
+def read_query(q: Annotated[str|None, Query(max_length=50, min_length=5, pattern="_admin$")]):
+    results = {"items" : [{"item_id": "Foo"}, {"item_id": "Bar"}]}
+    if q:
+        results.update({"q": q})
+    return results
+
+@app.get('/query_list/')
+def read_query_list(
+    q: 
+        Annotated[None | list[str], Query(
+            title="Query parameters as list", 
+            description="Deprecated function, use XPTO to get use of query to handle with list of query parameter",
+            alias="q-item", # alias for my 'q' parameter --> http://127.0.0.1:8000/query_list/?q-item=foo&q-item=bar
+            deprecated=True
+        )] = ['foo', 'bar'],
+    hidden_query: Annotated[str | None, Query(include_in_schema=False)] = None):
+    return {"q" : q}
