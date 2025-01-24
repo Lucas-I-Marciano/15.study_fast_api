@@ -91,8 +91,10 @@ def read_query(q: Annotated[str|None, Query(max_length=50, min_length=5, pattern
         results.update({"q": q})
     return results
 
-@app.get('/query_list/')
+from fastapi import Path
+@app.get('/query_list/{size}/')
 def read_query_list(
+    *,
     q: 
         Annotated[None | list[str], Query(
             title="Query parameters as list", 
@@ -100,5 +102,32 @@ def read_query_list(
             alias="q-item", # alias for my 'q' parameter --> http://127.0.0.1:8000/query_list/?q-item=foo&q-item=bar
             deprecated=True
         )] = ['foo', 'bar'],
-    hidden_query: Annotated[str | None, Query(include_in_schema=False)] = None):
-    return {"q" : q}
+    hidden_query: Annotated[str | None, Query(include_in_schema=False)] = None,
+    size: Annotated[float, Path(le=20.5, ge=0, title="Size of list", description="Variable to handle with # of items")],
+    ):
+    result = {"q" : q}
+    if size>0 :
+        result.update({"size":size})
+    return result
+
+from pydantic import Field
+from typing import Literal
+
+class QueryParamValidator(BaseModel):
+    model_config = {"extra":"forbid"} # It will forbid: http://127.0.0.1:8000/query-params-validator2/?limit=100&off_set=0&order_by=created_at&tool=hammer, because of tool=hammer
+    limit: int = Field(default=100, le=100, ge=0)
+    off_set: int = Field(default=0, le=10, ge=0)
+    tags: list[str] = []
+    order_by: Literal["tags", "created_at"] = "created_at" 
+
+@app.get('/query-params-validator/')
+def query_params_validator(
+    query: Annotated[QueryParamValidator, Query()]
+):
+    return query
+
+@app.get('/query-params-validator2/')
+def query_params_validator2(
+    query2: Annotated[QueryParamValidator, Query()]
+):
+    return query2
