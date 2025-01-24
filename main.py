@@ -140,7 +140,7 @@ class UserModel(BaseModel):
 
 @app.put('/body/')
 def study_body(
-    user: Annotated[UserModel , Body(title="User requesting")],
+    user: Annotated[UserModel, Body(title="User requesting", embed=True)],
     q: Annotated[str, Query(alias="q-param")]
     ):
     results = {"q":q , "user" : user}
