@@ -135,7 +135,7 @@ def query_params_validator2(
 
 from fastapi import Body
 class UserModel(BaseModel):
-    name: str
+    name: str = Field(title="Your name", max_digits=30, description="Your first name to fullfill our database")
     last_name: str | None = None
 
 @app.put('/body/')
