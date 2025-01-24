@@ -142,6 +142,7 @@ class UserModel(BaseModel):
 def study_body(
     user: Annotated[UserModel, Body(title="User requesting", embed=True)],
     item : Annotated[ItemName, Body()],
+    importance : Annotated[Literal['h', 'm', 'l'], Body()],
     q: Annotated[str, Query(alias="q-param")]
     ):
     results = {"q":q , "user" : user}
