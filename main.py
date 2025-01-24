@@ -114,6 +114,8 @@ from pydantic import Field
 class QueryParamValidator(BaseModel):
     limit: int = Field(default=100, le=100, ge=0)
     off_set: int = Field(default=0, le=10, ge=0)
+    tags: list[str] = []
+    order_by: ModelName 
 
 @app.get('/query-params-validator/')
 def query_params_validator(
