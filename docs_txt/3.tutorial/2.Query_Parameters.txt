@@ -22,3 +22,9 @@ Query Parameters and String Validations
     Query parameter list / multiple values
         def read_items(q: Annotated[list[str] | None, Query()] = None)
             url: http://localhost:8000/items/?q=foo&q=bar
+
+Declare more metadata
+    You can add a title -> async def read_items(q: Annotated[str | None, Query(title="Query string", min_length=3)] = None,):
+    Alias: Imagine that you want the parameter to be item-query, but item-query is not a valid Python variable name
+        Desire: http://127.0.0.1:8000/items/?item-query=foobaritems
+        Problem-solving: Use alias method of Query() class
