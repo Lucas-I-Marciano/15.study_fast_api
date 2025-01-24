@@ -131,3 +131,17 @@ def query_params_validator2(
     query2: Annotated[QueryParamValidator, Query()]
 ):
     return query2
+
+
+from fastapi import Body
+class UserModel(BaseModel):
+    name: str
+    last_name: str | None = None
+
+@app.put('/body/')
+def study_body(
+    user: Annotated[UserModel , Body(title="User requesting")],
+    q: Annotated[str, Query(alias="q-param")]
+    ):
+    results = {"q":q , "user" : user}
+    return results
