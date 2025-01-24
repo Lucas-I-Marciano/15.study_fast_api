@@ -92,10 +92,13 @@ def read_query(q: Annotated[str|None, Query(max_length=50, min_length=5, pattern
     return results
 
 @app.get('/query_list/')
-def read_query_list(q: Annotated[None | list[str], Query(
-        title="Query parameters as list", 
-        description="Deprecated function, use XPTO to get use of query to handle with list of query parameter",
-        alias="q-item", # alias for my 'q' parameter --> http://127.0.0.1:8000/query_list/?q-item=foo&q-item=bar
-        deprecated=True
-    )] = ['foo', 'bar']):
+def read_query_list(
+    q: 
+        Annotated[None | list[str], Query(
+            title="Query parameters as list", 
+            description="Deprecated function, use XPTO to get use of query to handle with list of query parameter",
+            alias="q-item", # alias for my 'q' parameter --> http://127.0.0.1:8000/query_list/?q-item=foo&q-item=bar
+            deprecated=True
+        )] = ['foo', 'bar'],
+    hidden_query: Annotated[str | None, Query(include_in_schema=False)] = None):
     return {"q" : q}
