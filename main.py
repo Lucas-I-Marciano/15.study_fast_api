@@ -131,3 +131,47 @@ def query_params_validator2(
     query2: Annotated[QueryParamValidator, Query()]
 ):
     return query2
+
+
+from fastapi import Body
+class UserModel(BaseModel):
+    name: str = Field(title="Your name", max_digits=30, description="Your first name to fullfill our database")
+    last_name: str | None = None
+
+@app.put('/body/')
+def study_body(
+    user: Annotated[UserModel, Body(title="User requesting", embed=True)],
+    item : Annotated[ItemName, Body()],
+    importance : Annotated[Literal['h', 'm', 'l'], Body()],
+    q: Annotated[str, Query(alias="q-param")]
+    ):
+    results = {"q":q , "user" : user}
+    return results
+
+
+class ClothingCategory(BaseModel):
+    weather: Literal['fall', 'winter', 'summer', 'spring']
+    sex: Literal['male', 'female']
+
+from pydantic import HttpUrl
+class ClothingModel(BaseModel):
+    category: ClothingCategory
+    color: str
+    size: str
+    image: HttpUrl
+
+class Offer(BaseModel):
+    cloth: ClothingModel
+    price: float
+    discount: float
+
+# Annotated[, Body(title="Weather", description="What is the recommended weather to use the Cloth")]
+@app.post('/offer/')
+def post_offer(
+    offer:Annotated[Offer, Body(description="Your offer")]
+    ):
+    print(offer)
+    for offe in offer:
+        print(offe)
+    return offer
+    
