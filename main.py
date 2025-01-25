@@ -147,3 +147,31 @@ def study_body(
     ):
     results = {"q":q , "user" : user}
     return results
+
+
+class ClothingCategory(BaseModel):
+    weather: Literal['fall', 'winter', 'summer', 'spring']
+    sex: Literal['male', 'female']
+
+from pydantic import HttpUrl
+class ClothingModel(BaseModel):
+    category: ClothingCategory
+    color: str
+    size: str
+    image: HttpUrl
+
+class Offer(BaseModel):
+    cloth: ClothingModel
+    price: float
+    discount: float
+
+# Annotated[, Body(title="Weather", description="What is the recommended weather to use the Cloth")]
+@app.post('/offer/')
+def post_offer(
+    offer:Annotated[Offer, Body(description="Your offer")]
+    ):
+    print(offer)
+    for offe in offer:
+        print(offe)
+    return offer
+    
