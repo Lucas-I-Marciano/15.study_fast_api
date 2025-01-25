@@ -186,20 +186,28 @@ class House(BaseModel):
 def body_example(
     house: Annotated[
         House,
-        Body(examples=[
-            {
-                "country" : "Brazil",
-                "state": "São Paulo",
-                "street": "Rua das Araucárias",
-                "number": 1
+        Body(openapi_examples={
+            "normal" : {
+                "summary" : "Expected example",
+                "description" : "Example that will work correctly",
+                "value" : {
+                        
+                    "country" : "Brazil",
+                    "state": "São Paulo",
+                    "street": "Rua das Araucárias",
+                    "number": 1
+                }
             },
-            {
-                "country" : "Argentina",
-                "state": "",
-                "street": "Buena vista",
-                "number": 1
+            "error" : {
+                "summary" : "Wrong example",
+                "description" : "Example that will not work",
+                "value" : {
+                    "country" : "Argentina",
+                    "street": "Buena vista",
+                    "number": 1
+                }
             },
-        ])
+        })
     ]
     ):
-    pass
+    return house
