@@ -177,13 +177,29 @@ def post_offer(
     
 ### Declare Request Example Data
 class House(BaseModel):
-    country: str = Field(examples=["Brazil"])
-    state: str = Field(examples=["São Paulo"])
-    steet: str = Field(examples=["Rua das Araucárias"])
-    number: int | str = Field(examples=[1])
+    country: str 
+    state: str 
+    street: str 
+    number: int | str 
 
 @app.put("/body-example/")
 def body_example(
-    house: House
+    house: Annotated[
+        House,
+        Body(examples=[
+            {
+                "country" : "Brazil",
+                "state": "São Paulo",
+                "street": "Rua das Araucárias",
+                "number": 1
+            },
+            {
+                "country" : "Argentina",
+                "state": "",
+                "street": "Buena vista",
+                "number": 1
+            },
+        ])
+    ]
     ):
     pass
