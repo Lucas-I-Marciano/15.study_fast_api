@@ -175,3 +175,28 @@ def post_offer(
         print(offe)
     return offer
     
+### Declare Request Example Data
+class House(BaseModel):
+    country: str
+    state: str
+    steet: str
+    number: int | str
+
+    model_config = {
+        "json_schema_extra" : {
+            "examples" : [
+                {
+                    "country" : "Brazil",
+                    "state": "São Paulo",
+                    "street": "Rua das Araucárias",
+                    "number": 1
+                }
+            ]
+        }
+    }
+
+@app.put("/body-example/")
+def body_example(
+    house: House
+    ):
+    pass
