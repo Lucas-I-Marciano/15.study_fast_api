@@ -236,6 +236,13 @@ def other_types(
         "duration " : duration ,
     }
 
+from fastapi import Cookie
+@app.get('/cookie/')
+def get_cookie(
+    cookie_id: Annotated[str | None, Cookie()]
+    ):
+    return {"cookie_id":cookie_id} # It must have cookie_id on browser cookies
+
 
 
 
