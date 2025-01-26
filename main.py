@@ -211,3 +211,32 @@ def body_example(
     ]
     ):
     return house
+
+from uuid import UUID
+from datetime import time, datetime, timedelta
+from time import sleep
+
+@app.put("/other-types/{id}/")
+def other_types(
+    id: UUID, # Example: 6d6a21de-0736-4c0e-9a3c-a3a1493fa6ad
+    start_datetime: Annotated[datetime, Body()],
+    end_datetime: Annotated[datetime, Body()],
+    process_after: Annotated[timedelta, Body()], # Example: P3D --> 3 days
+    repeat_at: Annotated[time | None, Body()]
+    ):
+    start_process = start_datetime + process_after
+    duration  = end_datetime - start_process
+    return {
+        "id" : id,
+        "start_datetime" : start_datetime,
+        "end_datetime" : end_datetime,
+        "process_after" : process_after,
+        "repeat_at" : repeat_at,
+        "start_process" : start_process,
+        "duration " : duration ,
+    }
+
+
+
+
+
