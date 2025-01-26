@@ -175,3 +175,107 @@ def post_offer(
         print(offe)
     return offer
     
+### Declare Request Example Data
+class House(BaseModel):
+    country: str 
+    state: str 
+    street: str 
+    number: int | str 
+
+@app.put("/body-example/")
+def body_example(
+    house: Annotated[
+        House,
+        Body(openapi_examples={
+            "normal" : {
+                "summary" : "Expected example",
+                "description" : "Example that will work correctly",
+                "value" : {
+                        
+                    "country" : "Brazil",
+                    "state": "São Paulo",
+                    "street": "Rua das Araucárias",
+                    "number": 1
+                }
+            },
+            "error" : {
+                "summary" : "Wrong example",
+                "description" : "Example that will not work",
+                "value" : {
+                    "country" : "Argentina",
+                    "street": "Buena vista",
+                    "number": 1
+                }
+            },
+        })
+    ]
+    ):
+    return house
+
+from uuid import UUID
+from datetime import time, datetime, timedelta
+from time import sleep
+
+@app.put("/other-types/{id}/")
+def other_types(
+    id: UUID, # Example: 6d6a21de-0736-4c0e-9a3c-a3a1493fa6ad
+    start_datetime: Annotated[datetime, Body()],
+    end_datetime: Annotated[datetime, Body()],
+    process_after: Annotated[timedelta, Body()], # Example: P3D --> 3 days
+    repeat_at: Annotated[time | None, Body()]
+    ):
+    start_process = start_datetime + process_after
+    duration  = end_datetime - start_process
+    return {
+        "id" : id,
+        "start_datetime" : start_datetime,
+        "end_datetime" : end_datetime,
+        "process_after" : process_after,
+        "repeat_at" : repeat_at,
+        "start_process" : start_process,
+        "duration " : duration ,
+    }
+
+from fastapi import Cookie
+@app.get('/cookie/')
+def get_cookie(
+    cookie_id: Annotated[str | None, Cookie()]
+    ):
+    return {"cookie_id":cookie_id} # It must have cookie_id on browser cookies
+
+from fastapi import Header
+@app.get('/headers/')
+def get_header(
+    header_param: Annotated[list[str], Header()]
+    ):
+    return {"header" : header_param} # Example: "header": ["Foo,Bar,Get"]
+
+
+class CookieModel(BaseModel):
+    session_id: str
+    fatebook_tracker: str | None = None
+    googall_tracker: str | None = None
+
+@app.get('/cookie-model-1/')
+def get_cookie_1(
+    cookies: Annotated[CookieModel, Cookie()]
+    ):
+    return cookies
+
+@app.get('/cookie-model-2/')
+def get_cookie_1(
+    cookies: Annotated[CookieModel, Cookie()]
+    ):
+    return {**cookies.dict(), "other-response": 2}
+
+
+class HeaderModel(BaseModel):
+    host: str
+    save_data: bool = False
+    x_tag: list[str] = []
+
+@app.get('/header-model-1/')
+def get_header_1(
+    headers: Annotated[HeaderModel, Header()]
+    ):
+    return headers
