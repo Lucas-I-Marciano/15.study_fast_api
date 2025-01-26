@@ -267,3 +267,15 @@ def get_cookie_1(
     cookies: Annotated[CookieModel, Cookie()]
     ):
     return {**cookies.dict(), "other-response": 2}
+
+
+class HeaderModel(BaseModel):
+    host: str
+    save_data: bool = False
+    x_tag: list[str] = []
+
+@app.get('/header-model-1/')
+def get_header_1(
+    headers: Annotated[HeaderModel, Header()]
+    ):
+    return headers
