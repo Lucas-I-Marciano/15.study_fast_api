@@ -243,7 +243,10 @@ def get_cookie(
     ):
     return {"cookie_id":cookie_id} # It must have cookie_id on browser cookies
 
-
-
-
-
+from fastapi import Header
+@app.get('/headers/')
+def get_header(
+    header_param: Annotated[list[str], Header()]
+    ):
+    return {"header" : header_param} # Example: "header": ["Foo,Bar,Get"]
+    
