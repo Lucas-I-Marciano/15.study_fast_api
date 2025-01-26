@@ -1,0 +1,6 @@
+Cookie Parameters
+    To use it you have to declare what is the name of required cookie you want to get
+    To test: 
+        Browser console -> document.cookie = "<cookie_name>=<cookie_value>"
+        On fastAPI docs -> cookie_id = <cookie_name> ### on header
+            curl -X 'GET' 'http://127.0.0.1:8000/cookie/' -H 'accept: application/json' -H 'Cookie: cookie_id=cookie_id'
