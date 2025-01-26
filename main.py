@@ -249,4 +249,21 @@ def get_header(
     header_param: Annotated[list[str], Header()]
     ):
     return {"header" : header_param} # Example: "header": ["Foo,Bar,Get"]
-    
+
+
+class CookieModel(BaseModel):
+    session_id: str
+    fatebook_tracker: str | None = None
+    googall_tracker: str | None = None
+
+@app.get('/cookie-model-1/')
+def get_cookie_1(
+    cookies: Annotated[CookieModel, Cookie()]
+    ):
+    return cookies
+
+@app.get('/cookie-model-2/')
+def get_cookie_1(
+    cookies: Annotated[CookieModel, Cookie()]
+    ):
+    return {**cookies.dict(), "other-response": 2}
