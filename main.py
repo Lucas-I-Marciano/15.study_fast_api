@@ -333,6 +333,7 @@ from fastapi import Form
 class BaseModelForm(BaseModel):
     username: str
     password: str
+    model_config = {"extra": "forbid"}
 
 @app.post("/login/")
 async def login_user(data: Annotated[BaseModelForm, Form()]):
