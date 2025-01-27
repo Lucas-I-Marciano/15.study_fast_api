@@ -321,6 +321,8 @@ class BaseUser(BaseModel):
 class UserIn2(BaseUser):
     password: str
 
-@app.post('/users-formated-response/', response_model_exclude_unset=True)
+from fastapi import status
+
+@app.post('/users-formated-response/', response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED)
 async def create_user_formated(user:UserIn2) -> BaseUser:
     return user # It will return only username, email and full_name
