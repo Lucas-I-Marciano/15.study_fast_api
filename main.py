@@ -311,3 +311,16 @@ async def create_user(user:Annotated[UserIn, Body(openapi_examples={
     }
 })]) -> UserIn:
     return user # Problem: I want to send all data but password
+
+    
+class BaseUser(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: str | None = None
+
+class UserIn2(BaseUser):
+    password: str
+
+@app.post('/users-formated-response/')
+async def create_user_formated(user:UserIn2) -> BaseUser:
+    return user # It will return only username, email and full_name
