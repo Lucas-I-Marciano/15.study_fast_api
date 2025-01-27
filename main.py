@@ -279,3 +279,35 @@ def get_header_1(
     headers: Annotated[HeaderModel, Header()]
     ):
     return headers
+
+from pydantic import EmailStr
+class UserIn(BaseModel):
+    username: str
+    password: str
+    email: EmailStr
+    full_name: str | None = None
+
+@app.post('/users/')
+async def create_user(user:Annotated[UserIn, Body(openapi_examples={
+    "right" : {
+        "summary" : "Expected body",
+        "description" : "Body correctly formatted",
+        "value" : {
+            "username" : "username",
+            "password" : "your_password",
+            "email" : "email@host.com",
+            "full_name" : "optional: Your Full Name"
+        }
+    },
+    "wrong" : {
+        "summary" : "Not Expected body",
+        "description" : "Body incorrectly formatted",
+        "value" : {
+            "username" : 1,
+            "password" : "your_password",
+            "email" : "Lorem",
+            "full_name" : 123
+        }
+    }
+})]) -> UserIn:
+    return user # Problem: I want to send all data but password
