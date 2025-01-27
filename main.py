@@ -330,6 +330,10 @@ async def create_user_formated(user:UserIn2) -> BaseUser:
 
 from fastapi import Form
 
+class BaseModelForm(BaseModel):
+    username: str
+    password: str
+
 @app.post("/login/")
-async def login_user(username: Annotated[str, Form()], password: Annotated[str, Form()]):
-    return {"username": username}
+async def login_user(data: Annotated[BaseModelForm, Form()]):
+    return {"data": data}
