@@ -1,0 +1,3 @@
+Response Model - Return Type
+    Use '->' at functions
+    You can filter what fields do you want to get from input and what do you want to show at output 
