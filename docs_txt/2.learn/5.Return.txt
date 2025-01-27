@@ -4,3 +4,14 @@ Response Model - Return Type
 
 Extra Models
     You can declare more types of response: https://fastapi.tiangolo.com/tutorial/extra-models/#union-or-anyof
+
+Response Status Code
+    100 and above are for "Information"
+    200 and above are for "Successful" responses
+    300 and above are for "Redirection"
+    400 and above are for "Client error" responses
+    500 and above are for server errors
+    Code
+        from fastapi import status
+        that way you can use the editor's autocomplete to find them
+        Remember to declare on 'decorator' parameter 'status'
