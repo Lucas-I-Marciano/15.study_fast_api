@@ -15,3 +15,7 @@ Response Status Code
         from fastapi import status
         that way you can use the editor's autocomplete to find them
         Remember to declare on 'decorator' parameter 'status'
+
+Form Data
+    Use Form to declare form data input parameters.
+    For example, in one of the ways the OAuth2 specification can be used (called "password flow") it is required to send a username and password as form fields
