@@ -326,3 +326,10 @@ from fastapi import status
 @app.post('/users-formated-response/', response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED)
 async def create_user_formated(user:UserIn2) -> BaseUser:
     return user # It will return only username, email and full_name
+
+
+from fastapi import Form
+
+@app.post("/login/")
+async def login_user(username: Annotated[str, Form()], password: Annotated[str, Form()]):
+    return {"username": username}
