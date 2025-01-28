@@ -384,7 +384,7 @@ def name_of_function(req: Request, exc:StarletteHTTPException):
         "custom_starlette" : True
     })
 
-@app.get('/error/{item_id}')
+@app.get('/error/{item_id}', summary="Error handling", description="Changing the way error is raising")
 def handling_error(item_id: Annotated[int, Path()]):
     if item_id == 3:
         raise ErrorItem3(item_id)
@@ -392,6 +392,6 @@ def handling_error(item_id: Annotated[int, Path()]):
         raise HTTPException(status_code=status.HTTP_418_IM_A_TEAPOT, detail="4 is not a good number")
     return {"item": item_id}
 
-@app.get('/error_two/')
+@app.get('/error_two/', summary="Error handling", description="Another way of handling errors")
 def handling_error2(item: Annotated[Item, Body()]):
     return item
