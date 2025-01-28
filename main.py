@@ -384,8 +384,20 @@ def name_of_function(req: Request, exc:StarletteHTTPException):
         "custom_starlette" : True
     })
 
-@app.get('/error/{item_id}', summary="Error handling", description="Changing the way error is raising")
+@app.get('/error/{item_id}')
 def handling_error(item_id: Annotated[int, Path()]):
+    """<h1>Error Handling</h1>
+
+    **Args**:
+        item_id (Annotated[int, Path): ID of item
+
+    **Raises**:
+        ErrorItem3: Model to handle with error in this function
+        HTTPException: Default Exception raising that is modified
+
+    **Returns**:
+        item: Item ID
+    """
     if item_id == 3:
         raise ErrorItem3(item_id)
     if item_id == 4:
