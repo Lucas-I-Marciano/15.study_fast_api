@@ -404,6 +404,6 @@ def handling_error(item_id: Annotated[int, Path()]):
         raise HTTPException(status_code=status.HTTP_418_IM_A_TEAPOT, detail="4 is not a good number")
     return {"item": item_id}
 
-@app.get('/error_two/', summary="Error handling", description="Another way of handling errors")
+@app.put('/error_two/', summary="Error handling", description="Another way of handling errors", response_description="Error or Item")
 def handling_error2(item: Annotated[Item, Body()]):
     return item
