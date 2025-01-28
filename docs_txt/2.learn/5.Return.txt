@@ -32,3 +32,4 @@ Request Files
         seek(offset): Goes to the byte position offset (int) in the file.
         close(): Closes the file.
     Use File, bytes, and UploadFile to declare files to be uploaded in the request, sent as form data.
+    Use File and Form together when you need to receive data and files in the same request
