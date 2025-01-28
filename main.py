@@ -338,3 +338,9 @@ class BaseModelForm(BaseModel):
 @app.post("/login/")
 async def login_user(data: Annotated[BaseModelForm, Form()]):
     return {"data": data}
+
+from fastapi import File
+
+@app.post("/files/")
+async def create_file(file: Annotated[bytes, File()]):
+    return {"file_size":len(file)}
