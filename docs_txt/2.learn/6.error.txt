@@ -6,3 +6,12 @@ Handling Errors
         RequestValidationError: Raised when a STRING is sending when function expect an INTEGER
         from starlette.exceptions import HTTPException as StarletteHTTPException 
             Overriding StarletteHTTPException -> It will be the response of evert HTTPException -> 'from fastapi import HTTPException'
+
+Path Operation Configuration
+    Notice that these parameters are passed directly to the path operation decorator, not to your path operation function
+        Response Status Code: status_code
+        Tags: tags
+        Summary and description: summary | description
+        Description from docstring
+        Response description: response_description
+        Deprecate a path operation: deprecated
