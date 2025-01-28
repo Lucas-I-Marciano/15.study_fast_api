@@ -344,3 +344,11 @@ from fastapi import File, UploadFile
 @app.post("/files/")
 async def create_file(file: Annotated[UploadFile, File()]):
     return {"filename":file.filename, "content_type":file.content_type}
+
+from fastapi import HTTPException
+
+@app.get('/error/{item_id}')
+def handling_error(item_id: Annotated[int, Path()]):
+    if item_id == 3:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="3 is not an acceptable value")
+    return {"item": item_id}
