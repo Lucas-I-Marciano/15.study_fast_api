@@ -366,7 +366,8 @@ def the_name_is_not_important(request:Request, exc:RequestValidationError):
     return JSONResponse({
         "exeption" : str(exc),
         "custom_exception": True,
-        "status code": status.HTTP_400_BAD_REQUEST
+        "status code": status.HTTP_400_BAD_REQUEST,
+        "body" : exc.body
     })
 
 from starlette.exceptions import HTTPException as StarletteHTTPException 
@@ -386,3 +387,7 @@ def handling_error(item_id: Annotated[int, Path()]):
     if item_id == 4:
         raise HTTPException(status_code=status.HTTP_418_IM_A_TEAPOT, detail="4 is not a good number")
     return {"item": item_id}
+
+@app.get('/error_two/')
+def handling_error2(item: Annotated[Item, Body()]):
+    return item
