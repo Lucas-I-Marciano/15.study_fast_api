@@ -39,6 +39,10 @@ def read_user(user_id :str):
 
 from enum import Enum
 
+class TagsEnum(Enum):
+    user = "users"
+    item = "items"
+
 class ModelName(str, Enum):
     #<name> = <value>
     alexnet = "Alexnet"
@@ -62,7 +66,7 @@ async def get_model(model_name : ModelName):
 def get_file(file_path:str):
     return {"path" : file_path}
 
-@app.get("/items/query_p_enum/{item_id}")
+@app.get("/items/query_p_enum/{item_id}", tags=[TagsEnum.item])
 async def read_user_item(
     item_id: str, needy: ModelName, skip: int = 0, limit: int | None = None
 ): # needy has to be the values of eNum, not name --> 'http://127.0.0.1:8000/items/query_p_enum/AN1322?needy=Alexnet&skip=0'
@@ -75,7 +79,7 @@ class ItemName(BaseModel):
     price: float
     tax: float | None = None
 
-@app.post("/items/")
+@app.post("/items/", tags=[TagsEnum.item])
 async def create_item(item:ItemName): # Declaring as a type of ItemName class that inherits from BaseModel, FastAPI will Read the body of the request as JSON|Validate the data|
     return {**item.model_dump(exclude=['tax']), "price_with_tax":item.price + item.tax} # model_dump() is a modernized method of .dict()
 
@@ -138,7 +142,7 @@ class UserModel(BaseModel):
     name: str = Field(title="Your name", max_digits=30, description="Your first name to fullfill our database")
     last_name: str | None = None
 
-@app.put('/body/')
+@app.put('/body/', tags=[TagsEnum.user])
 def study_body(
     user: Annotated[UserModel, Body(title="User requesting", embed=True)],
     item : Annotated[ItemName, Body()],
@@ -166,7 +170,7 @@ class Offer(BaseModel):
     discount: float
 
 # Annotated[, Body(title="Weather", description="What is the recommended weather to use the Cloth")]
-@app.post('/offer/')
+@app.post('/offer/', tags=[TagsEnum.item])
 def post_offer(
     offer:Annotated[Offer, Body(description="Your offer")]
     ):
@@ -287,7 +291,7 @@ class UserIn(BaseModel):
     email: EmailStr
     full_name: str | None = None
 
-@app.post('/users/')
+@app.post('/users/', tags=[TagsEnum.user])
 async def create_user(user:Annotated[UserIn, Body(openapi_examples={
     "right" : {
         "summary" : "Expected body",
@@ -323,7 +327,7 @@ class UserIn2(BaseUser):
 
 from fastapi import status
 
-@app.post('/users-formated-response/', response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED)
+@app.post('/users-formated-response/', response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED, tags=[TagsEnum.user])
 async def create_user_formated(user:UserIn2) -> BaseUser:
     return user # It will return only username, email and full_name
 
@@ -335,7 +339,7 @@ class BaseModelForm(BaseModel):
     password: str
     model_config = {"extra": "forbid"}
 
-@app.post("/login/")
+@app.post("/login/", tags=[TagsEnum.user])
 async def login_user(data: Annotated[BaseModelForm, Form()]):
     return {"data": data}
 
