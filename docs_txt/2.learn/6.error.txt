@@ -1,0 +1,8 @@
+Handling Errors
+    HTTPException: Because it's a Python exception, you don't return it, you raise it.
+    1st way: raise HTTPException(status_code=404, detail="Item not found")
+    2nd way: Create a custom model exception
+    3rd way: Overriding default functions
+        RequestValidationError: Raised when a STRING is sending when function expect an INTEGER
+        from starlette.exceptions import HTTPException as StarletteHTTPException 
+            Overriding StarletteHTTPException -> It will be the response of evert HTTPException -> 'from fastapi import HTTPException'
