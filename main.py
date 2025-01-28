@@ -360,6 +360,14 @@ def whathever_name_I_want(request:Request, exc: ErrorItem3):
         "message" : f'{exc.id_number} is not an acceptable value'
     })
 
+from fastapi.exceptions import RequestValidationError
+@app.exception_handler(RequestValidationError)
+def the_name_is_not_important(request:Request, exc:RequestValidationError):
+    return JSONResponse({
+        "exeption" : str(exc),
+        "custom_exception": True,
+        "status code": status.HTTP_400_BAD_REQUEST
+    })
 
 @app.get('/error/{item_id}')
 def handling_error(item_id: Annotated[int, Path()]):
