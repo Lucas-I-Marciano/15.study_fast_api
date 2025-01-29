@@ -470,3 +470,16 @@ def sub_dependency(
 @app.get('/dependent-3/', tags=[TagsEnum.dependency])
 def sub_dependencies(dependency:Annotated[any, Depends(sub_dependency)]):
     return dependency
+
+def get_token_header(x_token: Annotated[str, Header()]):
+    if x_token != "secret-pass" : # Remember that even declaring x_token, on header (by default) will be x-token
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden url - Invalid token")
+
+def get_key_header(x_key: Annotated[str, Header()]):
+    if x_key != "secret-key": # Remember that even declaring x_key, on header (by default) will be x-key
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden url - Invalid key")
+    return x_key
+
+@app.get('/path-dependency/', tags=[TagsEnum.dependency], dependencies=[Depends(get_token_header), Depends(get_key_header)])
+def path_dependency():
+    return {"Allow to see page" : True}
