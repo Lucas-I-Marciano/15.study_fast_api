@@ -5,6 +5,18 @@ from typing import Optional
 
 app = FastAPI()
 
+from typing import Annotated
+from fastapi import Header, Depends
+def get_token_header(x_token: Annotated[str, Header()]):
+    if x_token != "secret-pass" : # Remember that even declaring x_token, on header (by default) will be x-token
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden url - Invalid token")
+
+def get_key_header(x_key: Annotated[str, Header()]):
+    if x_key != "secret-key": # Remember that even declaring x_key, on header (by default) will be x-key
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden url - Invalid key")
+    return x_key
+app = FastAPI(dependencies=[Depends(get_token_header), Depends(get_key_header)])
+
 class Item(BaseModel):
     name: str
     price: float
@@ -42,6 +54,7 @@ from enum import Enum
 class TagsEnum(Enum):
     user = "users"
     item = "items"
+    dependency = "Dependency"
 
 class ModelName(str, Enum):
     #<name> = <value>
@@ -439,3 +452,39 @@ def update_path(item_id:str, item:ItemUpdate):
     items[item_id] = jsonable_encoder_new_data
     print(items)
     return jsonable_encoder_new_data
+
+class CommomDependencies:
+    def __init__(self, a:str, b:int, c:bool):
+        self.a = a
+        self.b = b
+        self.c = c
+
+from fastapi import Depends
+
+commom_annotated = Annotated[CommomDependencies, Depends()]
+
+@app.get('/dependent-1/', tags=[TagsEnum.dependency])
+def dependent_function(commom:commom_annotated):
+    return commom
+
+@app.get('/dependent-2/', tags=[TagsEnum.dependency])
+def dependent_function(commom:commom_annotated):
+    return commom
+
+def sub_dependency(
+        commom:Annotated[CommomDependencies, Depends()],
+        another_field:str | None = None
+    ):
+    if another_field:
+        return{"commom" : commom, "another":another_field}
+    return {"commom":commom}
+
+@app.get('/dependent-3/', tags=[TagsEnum.dependency])
+def sub_dependencies(dependency:Annotated[any, Depends(sub_dependency)]):
+    return dependency
+
+
+
+@app.get('/path-dependency/', tags=[TagsEnum.dependency], dependencies=[Depends(get_token_header), Depends(get_key_header)])
+def path_dependency():
+    return {"Allow to see page" : True}
