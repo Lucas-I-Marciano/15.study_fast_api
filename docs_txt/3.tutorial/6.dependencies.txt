@@ -4,3 +4,6 @@ Dependency Injection
 
 Classes as Dependencies
     What FastAPI actually checks is that it is a "callable" (function, class or anything else) and the parameters defined
+
+Sub-dependencies
+    You can create dependencies that have sub-dependencies. They can be as deep as you need them to be
