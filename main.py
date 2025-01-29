@@ -15,7 +15,7 @@ def get_key_header(x_key: Annotated[str, Header()]):
     if x_key != "secret-key": # Remember that even declaring x_key, on header (by default) will be x-key
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden url - Invalid key")
     return x_key
-app = FastAPI(dependencies=[Depends(get_token_header), Depends(get_key_header)])
+# app = FastAPI(dependencies=[Depends(get_token_header), Depends(get_key_header)])
 
 class Item(BaseModel):
     name: str
