@@ -441,12 +441,15 @@ def update_path(item_id:str, item:ItemUpdate):
     print(items)
     return jsonable_encoder_new_data
 
-def commom_dependencies(a:str, b:int, c:bool):
-    return{"a":a, "b":b, "c":c}
+class CommomDependencies:
+    def __init__(self, a:str, b:int, c:bool):
+        self.a = a
+        self.b = b
+        self.c = c
 
 from fastapi import Depends
 
-commom_annotated = Annotated[dict, Depends(commom_dependencies)]
+commom_annotated = Annotated[CommomDependencies, Depends(CommomDependencies)]
 
 @app.get('/dependent-1/', tags=[TagsEnum.dependency])
 def dependent_function(commom:commom_annotated):
