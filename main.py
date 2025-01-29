@@ -55,6 +55,7 @@ class TagsEnum(Enum):
     user = "users"
     item = "items"
     dependency = "Dependency"
+    security = "Security"
 
 class ModelName(str, Enum):
     #<name> = <value>
@@ -488,3 +489,12 @@ def sub_dependencies(dependency:Annotated[any, Depends(sub_dependency)]):
 @app.get('/path-dependency/', tags=[TagsEnum.dependency], dependencies=[Depends(get_token_header), Depends(get_key_header)])
 def path_dependency():
     return {"Allow to see page" : True}
+
+
+from fastapi.security import OAuth2PasswordBearer
+
+o_auth_pass_bearer = OAuth2PasswordBearer(tokenUrl="token") # relative URL: https://example.com/ --> https://example.com/token
+
+@app.get('/security', dependencies=[Depends(o_auth_pass_bearer)])
+def testing_security(token: Annotated[str, Depends(o_auth_pass_bearer)]):
+    return {"token" : token}
