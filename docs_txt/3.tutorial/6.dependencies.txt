@@ -11,4 +11,6 @@ Sub-dependencies
 Dependencies in path operation decorators
     You can run it without returnin any value -> 'dependencies' param on decorator function
     Dependencies errors and return values  
-        
+
+Global Dependencies
+    Applied to all the path operations in the application
