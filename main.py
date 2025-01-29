@@ -446,10 +446,12 @@ def commom_dependencies(a:str, b:int, c:bool):
 
 from fastapi import Depends
 
+commom_annotated = Annotated[dict, Depends(commom_dependencies)]
+
 @app.get('/dependent-1/', tags=[TagsEnum.dependency])
-def dependent_function(commom:Annotated[dict, Depends(commom_dependencies)]):
+def dependent_function(commom:commom_annotated):
     return commom
 
 @app.get('/dependent-2/', tags=[TagsEnum.dependency])
-def dependent_function(commom:Annotated[dict, Depends(commom_dependencies)]):
+def dependent_function(commom:commom_annotated):
     return commom
