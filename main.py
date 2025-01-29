@@ -410,3 +410,32 @@ from fastapi.encoders import jsonable_encoder
 def handling_error2(item: Annotated[Item, Body()]):
     item_jsonable_encoder = jsonable_encoder(item) # Maybe I want to return not a complex type
     return item_jsonable_encoder
+
+
+items = {
+    "foo": {"name": "Foo", "price": 50.2},
+    "bar": {"name": "Bar", "description": "The bartenders", "price": 62, "tax": 20.2},
+    "baz": {"name": "Baz", "description": None, "price": 50.2, "tax": 10.5, "tags": []},
+}
+
+class ItemUpdate(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    price: float | None = None
+    tax: float = 10.5
+    tags: list[str] = []
+
+@app.patch('/items/{item_id}/', tags=[TagsEnum.item])
+def update_path(item_id:str, item:ItemUpdate):
+    try :
+        saved_item = items[item_id]
+    except :
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not founded")
+    instance_saved_item_model = ItemUpdate(**saved_item)
+    body_data = item.model_dump(exclude_unset=True)
+
+    new_data = instance_saved_item_model.model_copy(update=body_data)
+    jsonable_encoder_new_data = jsonable_encoder(new_data)
+    items[item_id] = jsonable_encoder_new_data
+    print(items)
+    return jsonable_encoder_new_data
