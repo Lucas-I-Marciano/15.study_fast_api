@@ -365,24 +365,24 @@ def whathever_name_I_want(request:Request, exc: ErrorItem3):
     })
 
 from fastapi.exceptions import RequestValidationError
-@app.exception_handler(RequestValidationError)
-def the_name_is_not_important(request:Request, exc:RequestValidationError):
-    return JSONResponse({
-        "exeption" : str(exc),
-        "custom_exception": True,
-        "status code": status.HTTP_400_BAD_REQUEST,
-        "body" : exc.body
-    })
+# @app.exception_handler(RequestValidationError)
+# def the_name_is_not_important(request:Request, exc:RequestValidationError):
+#     return JSONResponse({
+#         "exeption" : str(exc),
+#         "custom_exception": True,
+#         "status code": status.HTTP_400_BAD_REQUEST,
+#         "body" : exc.body
+#     })
 
 from starlette.exceptions import HTTPException as StarletteHTTPException 
-@app.exception_handler(StarletteHTTPException)
-def name_of_function(req: Request, exc:StarletteHTTPException):
-    return JSONResponse({
-        "exeption" : str(exc.detail),
-        "custom_exception": True,
-        "status code": status.HTTP_418_IM_A_TEAPOT,
-        "custom_starlette" : True
-    })
+# @app.exception_handler(StarletteHTTPException)
+# def name_of_function(req: Request, exc:StarletteHTTPException):
+#     return JSONResponse({
+#         "exeption" : str(exc.detail),
+#         "custom_exception": True,
+#         "status code": status.HTTP_418_IM_A_TEAPOT,
+#         "custom_starlette" : True
+#     })
 
 @app.get('/error/{item_id}')
 def handling_error(item_id: Annotated[int, Path()]):
