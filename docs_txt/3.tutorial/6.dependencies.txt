@@ -1,0 +1,6 @@
+Dependency Injection
+    There is a way for your code (in this case, your path operation functions) to declare things that it requires to work and use: "dependencies"
+    And then, that system will take care of doing whatever is needed to provide your code with those needed dependencies ("inject" the dependencies)
+
+Classes as Dependencies
+    What FastAPI actually checks is that it is a "callable" (function, class or anything else) and the parameters defined
