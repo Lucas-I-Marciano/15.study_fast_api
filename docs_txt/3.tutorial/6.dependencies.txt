@@ -7,3 +7,8 @@ Classes as Dependencies
 
 Sub-dependencies
     You can create dependencies that have sub-dependencies. They can be as deep as you need them to be
+
+Dependencies in path operation decorators
+    You can run it without returnin any value -> 'dependencies' param on decorator function
+    Dependencies errors and return values  
+        
