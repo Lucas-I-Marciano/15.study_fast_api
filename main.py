@@ -42,6 +42,7 @@ from enum import Enum
 class TagsEnum(Enum):
     user = "users"
     item = "items"
+    dependency = "Dependency"
 
 class ModelName(str, Enum):
     #<name> = <value>
@@ -439,3 +440,16 @@ def update_path(item_id:str, item:ItemUpdate):
     items[item_id] = jsonable_encoder_new_data
     print(items)
     return jsonable_encoder_new_data
+
+def commom_dependencies(a:str, b:int, c:bool):
+    return{"a":a, "b":b, "c":c}
+
+from fastapi import Depends
+
+@app.get('/dependent-1/', tags=[TagsEnum.dependency])
+def dependent_function(commom:Annotated[dict, Depends(commom_dependencies)]):
+    return commom
+
+@app.get('/dependent-2/', tags=[TagsEnum.dependency])
+def dependent_function(commom:Annotated[dict, Depends(commom_dependencies)]):
+    return commom
