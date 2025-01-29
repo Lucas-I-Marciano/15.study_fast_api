@@ -449,7 +449,7 @@ class CommomDependencies:
 
 from fastapi import Depends
 
-commom_annotated = Annotated[CommomDependencies, Depends(CommomDependencies)]
+commom_annotated = Annotated[CommomDependencies, Depends()]
 
 @app.get('/dependent-1/', tags=[TagsEnum.dependency])
 def dependent_function(commom:commom_annotated):
