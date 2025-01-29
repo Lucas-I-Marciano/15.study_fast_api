@@ -458,3 +458,15 @@ def dependent_function(commom:commom_annotated):
 @app.get('/dependent-2/', tags=[TagsEnum.dependency])
 def dependent_function(commom:commom_annotated):
     return commom
+
+def sub_dependency(
+        commom:Annotated[CommomDependencies, Depends()],
+        another_field:str | None = None
+    ):
+    if another_field:
+        return{"commom" : commom, "another":another_field}
+    return {"commom":commom}
+
+@app.get('/dependent-3/', tags=[TagsEnum.dependency])
+def sub_dependencies(dependency:Annotated[any, Depends(sub_dependency)]):
+    return dependency
