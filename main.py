@@ -39,6 +39,10 @@ def read_user(user_id :str):
 
 from enum import Enum
 
+class TagsEnum(Enum):
+    user = "users"
+    item = "items"
+
 class ModelName(str, Enum):
     #<name> = <value>
     alexnet = "Alexnet"
@@ -62,7 +66,7 @@ async def get_model(model_name : ModelName):
 def get_file(file_path:str):
     return {"path" : file_path}
 
-@app.get("/items/query_p_enum/{item_id}")
+@app.get("/items/query_p_enum/{item_id}", tags=[TagsEnum.item])
 async def read_user_item(
     item_id: str, needy: ModelName, skip: int = 0, limit: int | None = None
 ): # needy has to be the values of eNum, not name --> 'http://127.0.0.1:8000/items/query_p_enum/AN1322?needy=Alexnet&skip=0'
@@ -75,7 +79,7 @@ class ItemName(BaseModel):
     price: float
     tax: float | None = None
 
-@app.post("/items/")
+@app.post("/items/", tags=[TagsEnum.item])
 async def create_item(item:ItemName): # Declaring as a type of ItemName class that inherits from BaseModel, FastAPI will Read the body of the request as JSON|Validate the data|
     return {**item.model_dump(exclude=['tax']), "price_with_tax":item.price + item.tax} # model_dump() is a modernized method of .dict()
 
@@ -138,7 +142,7 @@ class UserModel(BaseModel):
     name: str = Field(title="Your name", max_digits=30, description="Your first name to fullfill our database")
     last_name: str | None = None
 
-@app.put('/body/')
+@app.put('/body/', tags=[TagsEnum.user])
 def study_body(
     user: Annotated[UserModel, Body(title="User requesting", embed=True)],
     item : Annotated[ItemName, Body()],
@@ -166,7 +170,7 @@ class Offer(BaseModel):
     discount: float
 
 # Annotated[, Body(title="Weather", description="What is the recommended weather to use the Cloth")]
-@app.post('/offer/')
+@app.post('/offer/', tags=[TagsEnum.item])
 def post_offer(
     offer:Annotated[Offer, Body(description="Your offer")]
     ):
@@ -287,7 +291,7 @@ class UserIn(BaseModel):
     email: EmailStr
     full_name: str | None = None
 
-@app.post('/users/')
+@app.post('/users/', tags=[TagsEnum.user])
 async def create_user(user:Annotated[UserIn, Body(openapi_examples={
     "right" : {
         "summary" : "Expected body",
@@ -323,7 +327,7 @@ class UserIn2(BaseUser):
 
 from fastapi import status
 
-@app.post('/users-formated-response/', response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED)
+@app.post('/users-formated-response/', response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED, tags=[TagsEnum.user])
 async def create_user_formated(user:UserIn2) -> BaseUser:
     return user # It will return only username, email and full_name
 
@@ -335,7 +339,7 @@ class BaseModelForm(BaseModel):
     password: str
     model_config = {"extra": "forbid"}
 
-@app.post("/login/")
+@app.post("/login/", tags=[TagsEnum.user])
 async def login_user(data: Annotated[BaseModelForm, Form()]):
     return {"data": data}
 
@@ -344,3 +348,94 @@ from fastapi import File, UploadFile
 @app.post("/files/")
 async def create_file(file: Annotated[UploadFile, File()]):
     return {"filename":file.filename, "content_type":file.content_type}
+
+from fastapi import HTTPException, Request
+
+from fastapi.responses import JSONResponse
+
+class ErrorItem3(Exception):
+    def __init__(self, id_number:int):
+        self.id_number = id_number
+
+@app.exception_handler(ErrorItem3)
+def whathever_name_I_want(request:Request, exc: ErrorItem3):
+    return JSONResponse({
+        "status" : status.HTTP_406_NOT_ACCEPTABLE,
+        "message" : f'{exc.id_number} is not an acceptable value'
+    })
+
+from fastapi.exceptions import RequestValidationError
+# @app.exception_handler(RequestValidationError)
+# def the_name_is_not_important(request:Request, exc:RequestValidationError):
+#     return JSONResponse({
+#         "exeption" : str(exc),
+#         "custom_exception": True,
+#         "status code": status.HTTP_400_BAD_REQUEST,
+#         "body" : exc.body
+#     })
+
+from starlette.exceptions import HTTPException as StarletteHTTPException 
+# @app.exception_handler(StarletteHTTPException)
+# def name_of_function(req: Request, exc:StarletteHTTPException):
+#     return JSONResponse({
+#         "exeption" : str(exc.detail),
+#         "custom_exception": True,
+#         "status code": status.HTTP_418_IM_A_TEAPOT,
+#         "custom_starlette" : True
+#     })
+
+@app.get('/error/{item_id}')
+def handling_error(item_id: Annotated[int, Path()]):
+    """<h1>Error Handling</h1>
+
+    **Args**:
+        item_id (Annotated[int, Path): ID of item
+
+    **Raises**:
+        ErrorItem3: Model to handle with error in this function
+        HTTPException: Default Exception raising that is modified
+
+    **Returns**:
+        item: Item ID
+    """
+    if item_id == 3:
+        raise ErrorItem3(item_id)
+    if item_id == 4:
+        raise HTTPException(status_code=status.HTTP_418_IM_A_TEAPOT, detail="4 is not a good number")
+    return {"item": item_id}
+
+from fastapi.encoders import jsonable_encoder
+
+@app.put('/error_two/', summary="Error handling", description="Another way of handling errors", response_description="Error or Item")
+def handling_error2(item: Annotated[Item, Body()]):
+    item_jsonable_encoder = jsonable_encoder(item) # Maybe I want to return not a complex type
+    return item_jsonable_encoder
+
+
+items = {
+    "foo": {"name": "Foo", "price": 50.2},
+    "bar": {"name": "Bar", "description": "The bartenders", "price": 62, "tax": 20.2},
+    "baz": {"name": "Baz", "description": None, "price": 50.2, "tax": 10.5, "tags": []},
+}
+
+class ItemUpdate(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    price: float | None = None
+    tax: float = 10.5
+    tags: list[str] = []
+
+@app.patch('/items/{item_id}/', tags=[TagsEnum.item])
+def update_path(item_id:str, item:ItemUpdate):
+    try :
+        saved_item = items[item_id]
+    except :
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not founded")
+    instance_saved_item_model = ItemUpdate(**saved_item)
+    body_data = item.model_dump(exclude_unset=True)
+
+    new_data = instance_saved_item_model.model_copy(update=body_data)
+    jsonable_encoder_new_data = jsonable_encoder(new_data)
+    items[item_id] = jsonable_encoder_new_data
+    print(items)
+    return jsonable_encoder_new_data
