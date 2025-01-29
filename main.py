@@ -404,6 +404,9 @@ def handling_error(item_id: Annotated[int, Path()]):
         raise HTTPException(status_code=status.HTTP_418_IM_A_TEAPOT, detail="4 is not a good number")
     return {"item": item_id}
 
-@app.put('/error_two/', summary="Error handling", description="Another way of handling errors", response_description="Error or Item", deprecated=True)
+from fastapi.encoders import jsonable_encoder
+
+@app.put('/error_two/', summary="Error handling", description="Another way of handling errors", response_description="Error or Item")
 def handling_error2(item: Annotated[Item, Body()]):
-    return item
+    item_jsonable_encoder = jsonable_encoder(item) # Maybe I want to return not a complex type
+    return item_jsonable_encoder
