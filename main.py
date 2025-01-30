@@ -495,6 +495,15 @@ from fastapi.security import OAuth2PasswordBearer
 
 o_auth_pass_bearer = OAuth2PasswordBearer(tokenUrl="token") # relative URL: https://example.com/ --> https://example.com/token
 
-@app.get('/security', dependencies=[Depends(o_auth_pass_bearer)])
+@app.get('/security', dependencies=[Depends(o_auth_pass_bearer)], tags=[TagsEnum.security])
 def testing_security(token: Annotated[str, Depends(o_auth_pass_bearer)]):
     return {"token" : token}
+
+
+def get_current_user(token: Annotated[str, Depends(o_auth_pass_bearer)]):
+    return UserIn2(username=token + " " + "Lucas", email="l@l.com", full_name="", password="asad")
+
+
+@app.get('/user/me', tags=[TagsEnum.security])
+def get_current_user(current_user: Annotated[UserIn2, Depends(get_current_user)]):
+    return current_user
