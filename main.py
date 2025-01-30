@@ -524,3 +524,36 @@ fake_users_db = {
         "disabled": True,
     },
 }
+
+
+
+from fastapi.security import OAuth2PasswordRequestForm
+
+### Just to remember
+# class BaseUser(BaseModel):
+#     username: str
+#     email: EmailStr
+#     full_name: str | None = None
+
+# class UserIn2(BaseUser):
+#     password: str
+
+def fake_hash_password(password:str):
+    return f'hash...{password}'
+
+@app.post("/url_to_connect_with_RequestForm", tags=[TagsEnum.security])
+def login_user(form_data:Annotated[OAuth2PasswordRequestForm, Depends()]): # It
+    user_from_db = fake_users_db.get(form_data.username)
+    if not user_from_db :
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    user_instance = UserIn2(**user_from_db)
+    if user_instance.password != fake_hash_password(form_data.password):
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    # if user_instance
+    return {"access_token" : user_instance.username + "_super_token", "token_type": "bearer"}
+
+o_auth_RequestForm = OAuth2PasswordBearer(tokenUrl="url_to_connect_with_RequestForm")
+
+@app.get("/current/user", tags=[TagsEnum.security])
+def retrive_current_user(current_user:Annotated[BaseUser, Depends(o_auth_RequestForm)]):
+    return current_user # It will return the token, because function that depend of OAuth2PasswordRequestForm return token
