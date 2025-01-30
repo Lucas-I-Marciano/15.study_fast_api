@@ -500,10 +500,27 @@ def testing_security(token: Annotated[str, Depends(o_auth_pass_bearer)]):
     return {"token" : token}
 
 
-def get_current_user(token: Annotated[str, Depends(o_auth_pass_bearer)]):
+def get_current_user_encrypted(token: Annotated[str, Depends(o_auth_pass_bearer)]):
     return UserIn2(username=token + " " + "Lucas", email="l@l.com", full_name="", password="asad")
 
 
 @app.get('/user/me', tags=[TagsEnum.security])
-def get_current_user(current_user: Annotated[UserIn2, Depends(get_current_user)]):
+def get_current_user(current_user: Annotated[UserIn2, Depends(get_current_user_encrypted)]):
     return current_user
+
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "password": "hash...secret",
+        "disabled": False,
+    },
+    "alice": {
+        "username": "alice",
+        "full_name": "Alice Wonderson",
+        "email": "alice@example.com",
+        "password": "hash...secret2",
+        "disabled": True,
+    },
+}
