@@ -1,0 +1,11 @@
+Security
+    OAuth2: It includes ways to authenticate using a "third party"
+    OAuth 1:There was an OAuth 1, which is very different from OAuth2, and more complex, as it included direct specifications on how to encrypt the communication
+    OpenID Connect: It just extends OAuth2 specifying some things that are relatively ambiguous in OAuth2
+    OpenID (not "OpenID Connect"): That tried to solve the same thing as OpenID Connect, but was not based on OAuth2
+    OpenAPI
+        OpenAPI defines the following security schemes: apiKey, http, oauth2, openIdConnect
+
+Security - First Steps
+    tokenUrl="token" refers to a relative URL
+    Because we are using a relative URL, if your API was located at https://example.com/, then it would refer to https://example.com/token
