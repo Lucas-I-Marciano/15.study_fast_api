@@ -557,6 +557,12 @@ o_auth_RequestForm = OAuth2PasswordBearer(tokenUrl="url_to_connect_with_RequestF
 def capturing_user(token: Annotated[str, Depends(o_auth_RequestForm)]):
     username = token.replace("_super_token", '')
     user_dict = fake_users_db[username]
+    if not user_dict :
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            details= "Invalid authentication credentials",
+            headers= {"WWW-Authenticate": "Bearer"}
+        )
     user_instance = UserIn(**user_dict)
     return user_instance
     
