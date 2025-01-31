@@ -554,6 +554,13 @@ def login_user(form_data:Annotated[OAuth2PasswordRequestForm, Depends()]): # It
 
 o_auth_RequestForm = OAuth2PasswordBearer(tokenUrl="url_to_connect_with_RequestForm")
 
+def capturing_user(token: Annotated[str, Depends(o_auth_RequestForm)]):
+    username = token.replace("_super_token", '')
+    user_dict = fake_users_db[username]
+    user_instance = UserIn(**user_dict)
+    return user_instance
+    
+
 @app.get("/current/user", tags=[TagsEnum.security])
-def retrive_current_user(current_user:Annotated[BaseUser, Depends(o_auth_RequestForm)]):
-    return current_user # It will return the token, because function that depend of OAuth2PasswordRequestForm return token
+def retrive_current_user(current_user:Annotated[BaseUser, Depends(capturing_user)]):
+    return current_user # Now as is returning a user as capturing_user() is returning a user instance
