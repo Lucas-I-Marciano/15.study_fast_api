@@ -545,6 +545,7 @@ import jwt
 from jwt.exceptions import InvalidTokenError
 
 from passlib.context import CryptContext
+from datetime import datetime, timezone, timedelta
 
 import os 
 from dotenv import load_dotenv
@@ -552,6 +553,7 @@ load_dotenv()
 
 ALGORITHM = "HS256"
 SECRET_KEY = os.getenv('SECRET_KEY')
+ACCESS_TOKEN_EXPIRE_MINUTES = 15
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
 
@@ -563,6 +565,7 @@ def verify_password(plain_password, hash_password):
 
 def create_token(data):
     payload = data.copy()
+    payload.update({'exp':datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)})
     return jwt.encode(payload, key=SECRET_KEY, algorithm=ALGORITHM)
 
 @app.post("/url_to_connect_with_RequestForm", tags=[TagsEnum.security])
