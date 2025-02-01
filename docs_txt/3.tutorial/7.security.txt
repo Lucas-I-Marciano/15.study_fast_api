@@ -9,3 +9,13 @@ Security
 Security - First Steps
     tokenUrl="token" refers to a relative URL
     Because we are using a relative URL, if your API was located at https://example.com/, then it would refer to https://example.com/token
+
+Simple OAuth2 with Password and Bearer
+    OAuth2PasswordRequestForm will link with /token from OAuth2PasswordBearer
+    On dependable function from OAuth2PasswordRequestForm that is the function to post path '/token', it must return: {"access_token": <your_token>, "token_type": "bearer"}
+        All other function that will depend on OAuth2PasswordBearer will have on header: 'Authorization: Bearer <your_token>'
+
+OAuth2 with Password (and hashing), Bearer with JWT tokens
+    Main idea
+    JWT will encode and decode your data that will be the token
+    For password use context of from CryptContext -> passlib.context import CryptContext
