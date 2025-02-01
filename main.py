@@ -565,7 +565,10 @@ def verify_password(plain_password, hash_password):
 
 def create_token(data):
     payload = data.copy()
-    payload.update({'exp':datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)})
+    expiration = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expiration = str(int(expiration.timestamp()))
+    payload.update({"exp" : expiration})
+    print("payload", payload)
     return jwt.encode(payload, key=SECRET_KEY, algorithm=ALGORITHM)
 
 @app.post("/url_to_connect_with_RequestForm", tags=[TagsEnum.security])
@@ -576,7 +579,7 @@ def login_user(form_data:Annotated[OAuth2PasswordRequestForm, Depends()]): # It
     user_instance = UserIn2(**user_from_db)
     if not verify_password(form_data.password, user_instance.password):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    return {"access_token" : create_token({"sub":user_instance.username}), "token_type": "bearer"}
+    return {"access_token" : create_token({"sub":str(user_instance.username)}), "token_type": "bearer"}
 
 o_auth_RequestForm = OAuth2PasswordBearer(tokenUrl="url_to_connect_with_RequestForm")
 
