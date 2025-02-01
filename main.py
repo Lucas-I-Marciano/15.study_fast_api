@@ -513,14 +513,14 @@ fake_users_db = {
         "username": "johndoe",
         "full_name": "John Doe",
         "email": "johndoe@example.com",
-        "password": "hash...secret",
+        "password": "$2b$12$zCOUSOkVRRU1JPE1mV7OR.OKUvA7COgC0pnCQ/EJI1aSCq4aqHA6i",
         "disabled": False,
     },
     "alice": {
         "username": "alice",
         "full_name": "Alice Wonderson",
         "email": "alice@example.com",
-        "password": "hash...secret2",
+        "password": "$2b$12$Sn9pgTKvFTln6eqHGjriwOmwa0m35bD25bKqiNQEyLUHXVRtaqVYi",
         "disabled": True,
     },
 }
