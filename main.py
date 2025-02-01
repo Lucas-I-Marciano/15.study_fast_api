@@ -15,7 +15,7 @@ def get_key_header(x_key: Annotated[str, Header()]):
     if x_key != "secret-key": # Remember that even declaring x_key, on header (by default) will be x-key
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden url - Invalid key")
     return x_key
-app = FastAPI(dependencies=[Depends(get_token_header), Depends(get_key_header)])
+# app = FastAPI(dependencies=[Depends(get_token_header), Depends(get_key_header)])
 
 class Item(BaseModel):
     name: str
@@ -55,6 +55,7 @@ class TagsEnum(Enum):
     user = "users"
     item = "items"
     dependency = "Dependency"
+    security = "Security"
 
 class ModelName(str, Enum):
     #<name> = <value>
@@ -488,3 +489,114 @@ def sub_dependencies(dependency:Annotated[any, Depends(sub_dependency)]):
 @app.get('/path-dependency/', tags=[TagsEnum.dependency], dependencies=[Depends(get_token_header), Depends(get_key_header)])
 def path_dependency():
     return {"Allow to see page" : True}
+
+
+from fastapi.security import OAuth2PasswordBearer
+
+o_auth_pass_bearer = OAuth2PasswordBearer(tokenUrl="token") # relative URL: https://example.com/ --> https://example.com/token
+
+@app.get('/security', dependencies=[Depends(o_auth_pass_bearer)], tags=[TagsEnum.security])
+def testing_security(token: Annotated[str, Depends(o_auth_pass_bearer)]):
+    return {"token" : token}
+
+
+def get_current_user_encrypted(token: Annotated[str, Depends(o_auth_pass_bearer)]):
+    return UserIn2(username=token + " " + "Lucas", email="l@l.com", full_name="", password="asad")
+
+
+@app.get('/user/me', tags=[TagsEnum.security])
+def get_current_user(current_user: Annotated[UserIn2, Depends(get_current_user_encrypted)]):
+    return current_user
+
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "password": "$2b$12$zCOUSOkVRRU1JPE1mV7OR.OKUvA7COgC0pnCQ/EJI1aSCq4aqHA6i",
+        "disabled": False,
+    },
+    "alice": {
+        "username": "alice",
+        "full_name": "Alice Wonderson",
+        "email": "alice@example.com",
+        "password": "$2b$12$Sn9pgTKvFTln6eqHGjriwOmwa0m35bD25bKqiNQEyLUHXVRtaqVYi",
+        "disabled": True,
+    },
+}
+
+
+
+from fastapi.security import OAuth2PasswordRequestForm
+
+### Just to remember
+# class BaseUser(BaseModel):
+#     username: str
+#     email: EmailStr
+#     full_name: str | None = None
+
+# class UserIn2(BaseUser):
+#     password: str
+
+def fake_hash_password(password:str):
+    return f'hash...{password}'
+
+import jwt
+from jwt.exceptions import InvalidTokenError
+
+from passlib.context import CryptContext
+from datetime import datetime, timezone, timedelta
+
+import os 
+from dotenv import load_dotenv
+load_dotenv()
+
+ALGORITHM = "HS256"
+SECRET_KEY = os.getenv('SECRET_KEY')
+ACCESS_TOKEN_EXPIRE_MINUTES = 15
+
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
+
+def create_hash_password(password):
+    return pwd_context.hash(password)
+
+def verify_password(plain_password, hash_password):
+    return pwd_context.verify(plain_password, hash_password)
+
+def create_token(data):
+    payload = data.copy()
+    payload.update({'exp':datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)})
+    return jwt.encode(payload, key=SECRET_KEY, algorithm=ALGORITHM)
+
+@app.post("/url_to_connect_with_RequestForm", tags=[TagsEnum.security])
+def login_user(form_data:Annotated[OAuth2PasswordRequestForm, Depends()]): # It
+    user_from_db = fake_users_db.get(form_data.username)
+    if not user_from_db :
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    user_instance = UserIn2(**user_from_db)
+    if not verify_password(form_data.password, user_instance.password):
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    return {"access_token" : create_token({"sub":user_instance.username}), "token_type": "bearer"}
+
+o_auth_RequestForm = OAuth2PasswordBearer(tokenUrl="url_to_connect_with_RequestForm")
+
+def capturing_user(token: Annotated[str, Depends(o_auth_RequestForm)]):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        decoded_data = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
+        user_dict = fake_users_db[decoded_data['sub']]
+    except:
+        raise credentials_exception
+    if not user_dict :
+        raise credentials_exception
+    user_instance = UserIn(**user_dict)
+    return user_instance
+    
+
+@app.get("/current/user", tags=[TagsEnum.security])
+def retrive_current_user(current_user:Annotated[BaseUser, Depends(capturing_user)]):
+    return current_user # Now as is returning a user as capturing_user() is returning a user instance
