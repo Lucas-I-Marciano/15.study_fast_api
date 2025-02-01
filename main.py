@@ -603,3 +603,15 @@ def capturing_user(token: Annotated[str, Depends(o_auth_RequestForm)]):
 @app.get("/current/user", tags=[TagsEnum.security])
 def retrive_current_user(current_user:Annotated[BaseUser, Depends(capturing_user)]):
     return current_user # Now as is returning a user as capturing_user() is returning a user instance
+
+from fastapi import Request
+import time as time_2
+
+@app.middleware("http")
+async def time_in_header(req: Request, call_next):
+    start_time = time_2.perf_counter()
+    print(req.headers)
+    response = await call_next(req)
+    elapsed_time = time_2.perf_counter() - start_time
+    response.headers["X-time-elapsed"] = str(elapsed_time)
+    return response
