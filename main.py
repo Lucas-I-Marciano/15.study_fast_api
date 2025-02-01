@@ -579,8 +579,8 @@ def login_user(form_data:Annotated[OAuth2PasswordRequestForm, Depends()]): # It
 o_auth_RequestForm = OAuth2PasswordBearer(tokenUrl="url_to_connect_with_RequestForm")
 
 def capturing_user(token: Annotated[str, Depends(o_auth_RequestForm)]):
-    username = token.replace("_super_token", '')
-    user_dict = fake_users_db[username]
+    decoded_data = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
+    user_dict = fake_users_db[decoded_data['sub']]
     if not user_dict :
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
