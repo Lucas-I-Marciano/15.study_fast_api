@@ -541,6 +541,30 @@ from fastapi.security import OAuth2PasswordRequestForm
 def fake_hash_password(password:str):
     return f'hash...{password}'
 
+import jwt
+from jwt.exceptions import InvalidTokenError
+
+from passlib.context import CryptContext
+
+import os 
+from dotenv import load_dotenv
+load_dotenv()
+
+ALGORITHM = "HS256"
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
+
+def create_hash_password(password):
+    return pwd_context.hash(password)
+
+def verify_password(plain_password, hash_password):
+    return pwd_context.verify(plain_password, hash_password)
+
+def create_token(data):
+    payload = data.copy()
+    return jwt.encode(payload, key=SECRET_KEY, algorithm=ALGORITHM)
+
 @app.post("/url_to_connect_with_RequestForm", tags=[TagsEnum.security])
 def login_user(form_data:Annotated[OAuth2PasswordRequestForm, Depends()]): # It
     user_from_db = fake_users_db.get(form_data.username)
