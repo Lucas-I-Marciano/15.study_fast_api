@@ -571,10 +571,10 @@ def login_user(form_data:Annotated[OAuth2PasswordRequestForm, Depends()]): # It
     if not user_from_db :
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     user_instance = UserIn2(**user_from_db)
-    if user_instance.password != fake_hash_password(form_data.password):
+    if not verify_password(form_data.password, user_instance.password):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     # if user_instance
-    return {"access_token" : user_instance.username + "_super_token", "token_type": "bearer"}
+    return {"access_token" : create_token({"sub":user_instance.username}), "token_type": "bearer"}
 
 o_auth_RequestForm = OAuth2PasswordBearer(tokenUrl="url_to_connect_with_RequestForm")
 
