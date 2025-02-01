@@ -11,7 +11,7 @@ setTimeout(() => {
       }
     })
     .then((response) => {
-      paragraph.innerHTML = response;
+      paragraph.innerHTML = `Hello ${response["Hello"]}`;
       console.debug(response);
     })
     .catch((error) => {
