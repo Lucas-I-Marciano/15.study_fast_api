@@ -579,14 +579,18 @@ def login_user(form_data:Annotated[OAuth2PasswordRequestForm, Depends()]): # It
 o_auth_RequestForm = OAuth2PasswordBearer(tokenUrl="url_to_connect_with_RequestForm")
 
 def capturing_user(token: Annotated[str, Depends(o_auth_RequestForm)]):
-    decoded_data = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
-    user_dict = fake_users_db[decoded_data['sub']]
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        decoded_data = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
+        user_dict = fake_users_db[decoded_data['sub']]
+    except:
+        raise credentials_exception
     if not user_dict :
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            details= "Invalid authentication credentials",
-            headers= {"WWW-Authenticate": "Bearer"}
-        )
+        raise credentials_exception
     user_instance = UserIn(**user_dict)
     return user_instance
     
