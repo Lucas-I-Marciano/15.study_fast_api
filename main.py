@@ -625,3 +625,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+from sqlmodel import SQLModel, Field
+
+class Hero(SQLModel, table=True):
+    id: int|None = Field(default=None, primary_key=True)
+    name: str = Field(index=True)
+    age: int = Field(default=0, index=True)
+    secret_name: str 
