@@ -626,10 +626,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, create_engine
 
 class Hero(SQLModel, table=True):
     id: int|None = Field(default=None, primary_key=True)
     name: str = Field(index=True)
     age: int = Field(default=0, index=True)
     secret_name: str 
+
+engine = create_engine(
+    "sqlite:///database.db", 
+    connect_args={"check_same_thread":False}
+)
+
+def create_all_table_and_db():
+    SQLModel.metadata.create_all(engine)
+
+@app.on_event("startup")
+def creating_on_startup():
+    create_all_table_and_db()
