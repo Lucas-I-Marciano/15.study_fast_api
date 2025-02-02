@@ -634,9 +634,12 @@ class Hero(SQLModel, table=True):
     age: int = Field(default=0, index=True)
     secret_name: str 
 
+database_name = "database.db"
+database_url = f"sqlite:///{database_name}"
+connect_args = {"check_same_thread":False}
 engine = create_engine(
-    "sqlite:///database.db", 
-    connect_args={"check_same_thread":False}
+    database_url, 
+    connect_args=connect_args
 )
 
 def create_all_table_and_db():
