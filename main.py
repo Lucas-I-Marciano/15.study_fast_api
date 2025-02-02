@@ -626,7 +626,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from sqlmodel import SQLModel, Field, create_engine
+from sqlmodel import SQLModel, Field, create_engine, Session
 
 class Hero(SQLModel, table=True):
     id: int|None = Field(default=None, primary_key=True)
@@ -648,3 +648,9 @@ def create_all_table_and_db():
 @app.on_event("startup")
 def creating_on_startup():
     create_all_table_and_db()
+
+def get_session():
+    with Session(engine) as session:
+        yield session # It will provide a new Session for each request. This is what ensures that we use a single session per request
+
+session_dependency = Annotated[Session, Depends(get_session())] # Help on database management
