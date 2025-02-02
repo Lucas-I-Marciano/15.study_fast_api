@@ -56,6 +56,7 @@ class TagsEnum(Enum):
     item = "items"
     dependency = "Dependency"
     security = "Security"
+    hero = "Hero"
 
 class ModelName(str, Enum):
     #<name> = <value>
@@ -653,4 +654,12 @@ def get_session():
     with Session(engine) as session:
         yield session # It will provide a new Session for each request. This is what ensures that we use a single session per request
 
-session_dependency = Annotated[Session, Depends(get_session())] # Help on database management
+session_dependency = Annotated[Session, Depends(get_session)] # Help on database management
+
+
+@app.post("/hero", tags=[TagsEnum.hero])
+def create_hero(hero: Hero, session: session_dependency):
+    session.add(hero)
+    session.commit()
+    session.refresh(hero)
+    return hero
