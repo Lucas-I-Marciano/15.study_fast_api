@@ -627,7 +627,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from sqlmodel import SQLModel, Field, create_engine, Session
+from sqlmodel import SQLModel, Field, create_engine, Session, select
 
 class Hero(SQLModel, table=True):
     id: int|None = Field(default=None, primary_key=True)
@@ -663,3 +663,8 @@ def create_hero(hero: Hero, session: session_dependency):
     session.commit()
     session.refresh(hero)
     return hero
+
+@app.get("/hero", tags=[TagsEnum.hero])
+def get_list_heroes(session: session_dependency):
+    heroes = session.exec(select(Hero)).all()
+    return heroes
