@@ -615,3 +615,13 @@ async def time_in_header(req: Request, call_next):
     elapsed_time = time_2.perf_counter() - start_time
     response.headers["X-time-elapsed"] = str(elapsed_time)
     return response
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
