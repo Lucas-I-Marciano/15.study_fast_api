@@ -674,6 +674,5 @@ def get_one_hero(
     session: session_dependency,
     hero_id: Annotated[int, Path()],
     ):
-    hero = session.exec(select(Hero).where(Hero.id==hero_id))
-    for returned_hero in hero:
-        return returned_hero
+    hero = session.get(Hero, hero_id)
+    return hero
