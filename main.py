@@ -668,3 +668,12 @@ def create_hero(hero: Hero, session: session_dependency):
 def get_list_heroes(session: session_dependency):
     heroes = session.exec(select(Hero)).all()
     return heroes
+
+@app.get("/hero/{hero_id}", tags=[TagsEnum.hero])
+def get_one_hero(
+    session: session_dependency,
+    hero_id: Annotated[int, Path()],
+    ):
+    hero = session.exec(select(Hero).where(Hero.id==hero_id))
+    for returned_hero in hero:
+        return returned_hero
