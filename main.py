@@ -676,3 +676,13 @@ def get_one_hero(
     ):
     hero = session.get(Hero, hero_id)
     return hero
+
+@app.delete("/hero/{hero_id}", tags=[TagsEnum.hero])
+def delete_hero(
+    session: session_dependency,
+    hero_id: Annotated[int, Path()]
+    ):
+    hero = session.get(Hero, hero_id)
+    session.delete(hero)
+    session.commit()
+    return {"message": "Hero deleted"}
