@@ -640,6 +640,9 @@ class Hero(BaseHero, table=True):
 class PublicHero(BaseHero):
     id:int
 
+class HeroCreate(BaseHero):
+    secret_name: str
+
 database_name = "database.db"
 database_url = f"sqlite:///{database_name}"
 connect_args = {"check_same_thread":False}
@@ -661,12 +664,13 @@ def get_session():
 
 session_dependency = Annotated[Session, Depends(get_session)] # Help on database management
 
-@app.post("/hero", tags=[TagsEnum.hero])
-def create_hero(hero: Hero, session: session_dependency):
-    session.add(hero)
+@app.post("/hero", tags=[TagsEnum.hero], response_model=PublicHero)
+def create_hero(hero: HeroCreate, session: session_dependency):
+    db_hero = Hero.model_validate(hero)
+    session.add(db_hero)
     session.commit()
-    session.refresh(hero)
-    return hero
+    session.refresh(db_hero)
+    return db_hero
 
 @app.get("/hero", tags=[TagsEnum.hero], response_model=list[PublicHero])
 def get_list_heroes(session: session_dependency):
