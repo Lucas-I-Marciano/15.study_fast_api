@@ -627,50 +627,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
 from sqlmodel import SQLModel, Field, create_engine, Session, select
 
-class BaseHero(SQLModel):
-    name: str = Field(index=True)
-    age: int = Field(default=0, index=True)
-
-class Heroes(BaseHero, table=True):
-    id: int|None = Field(default=None, primary_key=True)
-    secret_name: str 
-
-class PublicHero(BaseHero):
-    id:int
-
-class HeroCreate(BaseHero):
-    secret_name: str
-
-class HeroUpdate(BaseHero):
-    """
-    Because all the fields actually change (the type now includes None and they now have a default value of None), we need to re-declare them
-    """
-    name: str|None = Field(default=None, index=True)
-    age: int|None = Field(default=None, index=True)
-    secret_name: str = Field(default=None)
-
-database_name = "database.db"
-database_url = f"sqlite:///{database_name}"
-connect_args = {"check_same_thread":False}
-engine = create_engine(
-    database_url, 
-    connect_args=connect_args
-)
-
-def create_all_table_and_db():
-    SQLModel.metadata.create_all(engine)
+from api.db import create_all_table_and_db, get_session
 
 @app.on_event("startup")
 def creating_on_startup():
     create_all_table_and_db()
 
-def get_session():
-    with Session(engine) as session:
-        yield session # It will provide a new Session for each request. This is what ensures that we use a single session per request
-
 session_dependency = Annotated[Session, Depends(get_session)] # Help on database management
+
+from api.db.Heroes import PublicHero, BaseHero, HeroCreate, HeroUpdate, Heroes
 
 @app.post("/heroes", tags=[TagsEnum.hero], response_model=PublicHero)
 def create_hero(hero: HeroCreate, session: session_dependency):
