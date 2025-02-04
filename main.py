@@ -643,6 +643,14 @@ class PublicHero(BaseHero):
 class HeroCreate(BaseHero):
     secret_name: str
 
+class HeroUpdate(BaseHero):
+    """
+    Because all the fields actually change (the type now includes None and they now have a default value of None), we need to re-declare them
+    """
+    name: str|None = Field(default=None, index=True)
+    age: int|None = Field(default=None, index=True)
+    secret_name: str = Field(default=None)
+
 database_name = "database.db"
 database_url = f"sqlite:///{database_name}"
 connect_args = {"check_same_thread":False}
@@ -694,3 +702,18 @@ def delete_hero(
     session.delete(hero)
     session.commit()
     return {"message": "Hero deleted"}
+
+@app.patch("/heroes/{hero_id}", tags=[TagsEnum.hero], response_model=PublicHero)
+def update_hero(
+    session: session_dependency,
+    hero_id: Annotated[int, Path()],
+    hero_data: Annotated[HeroUpdate, Body()]
+    ):
+    hero_db = session.get(Heroes, hero_id)
+    hero_body = hero_data.model_dump(exclude_unset=True)
+    
+    hero_db.sqlmodel_update(hero_body)
+    session.add(hero_db)
+    session.commit()
+    session.refresh(hero_db)
+    return hero_db
