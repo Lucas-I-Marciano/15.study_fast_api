@@ -1,0 +1,34 @@
+SQL (Relational) Databases
+    Creating a model (class) with (SQLModel, table = true)
+        table=True tells SQLModel that this is a table model
+        Field(primary_key=True) tells SQLModel that the id is the primary key
+        Field(index=True) tells SQLModel that it should create a SQL index for this column, that would allow faster lookups in the database when reading data filtered by this column
+    
+    Create an Engine
+        A SQLModel engine is what holds the connections to the database
+        check_same_thread=False allows FastAPI to use the same SQLite database in different threads
+
+    Create the Tables
+        SQLModel.metadata.create_all(engine) to create the tables for all the table models
+
+    Create a Session Dependency
+        Session is what stores the objects in memory and keeps track of any changes needed in the data, then it uses the engine to communicate with the database
+
+    Create Database Tables on Startup
+        @app.on_event("startup")
+
+    Create a Hero
+        Function with two arguments, table/pydantic model/class and session that is Session Dependency type
+        Add, commit and then refresh
+    Read Heroes
+        Function with 1 argument that is the session of Session Dependency type
+        It can use limit and offset too
+    Read One Hero
+        Function with 2 arguments, id and session
+        To consult, just run session.get(model, id)
+    Delete a Hero
+        Function with 2 arguments, id and session
+        Consult with session.get(model, id)
+        session.delete(consulted_value) and then commit
+    
+Update the App with Multiple Models
