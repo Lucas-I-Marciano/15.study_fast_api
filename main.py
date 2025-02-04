@@ -691,6 +691,9 @@ def get_one_hero(
     hero_id: Annotated[int, Path()],
     ):
     hero = session.get(Heroes, hero_id)
+    print(hero)
+    if not hero:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not founded")
     return hero
 
 @app.delete("/heroes/{hero_id}", tags=[TagsEnum.hero])
@@ -699,6 +702,8 @@ def delete_hero(
     hero_id: Annotated[int, Path()]
     ):
     hero = session.get(Heroes, hero_id)
+    if not hero:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not founded")
     session.delete(hero)
     session.commit()
     return {"message": "Hero deleted"}
@@ -710,9 +715,12 @@ def update_hero(
     hero_data: Annotated[HeroUpdate, Body()]
     ):
     hero_db = session.get(Heroes, hero_id)
+    if not hero_db:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not founded")
+
     hero_body = hero_data.model_dump(exclude_unset=True)
-    
     hero_db.sqlmodel_update(hero_body)
+
     session.add(hero_db)
     session.commit()
     session.refresh(hero_db)
