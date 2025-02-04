@@ -641,3 +641,13 @@ session_dependency = Annotated[Session, Depends(get_session)] # Help on database
 
 from api.routers import Heroes
 app.include_router(Heroes.router)
+
+from api.internal import admin
+from api.dependencies import get_token_header
+
+app.include_router(
+    admin.router,
+    prefix="/admin",
+    tags=["admin"],
+    dependencies=[Depends(get_token_header)]
+    )
