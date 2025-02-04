@@ -633,7 +633,7 @@ class BaseHero(SQLModel):
     name: str = Field(index=True)
     age: int = Field(default=0, index=True)
 
-class Hero(BaseHero, table=True):
+class Heroes(BaseHero, table=True):
     id: int|None = Field(default=None, primary_key=True)
     secret_name: str 
 
@@ -664,33 +664,33 @@ def get_session():
 
 session_dependency = Annotated[Session, Depends(get_session)] # Help on database management
 
-@app.post("/hero", tags=[TagsEnum.hero], response_model=PublicHero)
+@app.post("/heroes", tags=[TagsEnum.hero], response_model=PublicHero)
 def create_hero(hero: HeroCreate, session: session_dependency):
-    db_hero = Hero.model_validate(hero)
+    db_hero = Heroes.model_validate(hero)
     session.add(db_hero)
     session.commit()
     session.refresh(db_hero)
     return db_hero
 
-@app.get("/hero", tags=[TagsEnum.hero], response_model=list[PublicHero])
+@app.get("/heroes", tags=[TagsEnum.hero], response_model=list[PublicHero])
 def get_list_heroes(session: session_dependency):
-    heroes = session.exec(select(Hero)).all()
+    heroes = session.exec(select(Heroes)).all()
     return heroes
 
-@app.get("/hero/{hero_id}", tags=[TagsEnum.hero])
+@app.get("/heroes/{hero_id}", tags=[TagsEnum.hero], response_model=PublicHero)
 def get_one_hero(
     session: session_dependency,
     hero_id: Annotated[int, Path()],
     ):
-    hero = session.get(Hero, hero_id)
+    hero = session.get(Heroes, hero_id)
     return hero
 
-@app.delete("/hero/{hero_id}", tags=[TagsEnum.hero])
+@app.delete("/heroes/{hero_id}", tags=[TagsEnum.hero])
 def delete_hero(
     session: session_dependency,
     hero_id: Annotated[int, Path()]
     ):
-    hero = session.get(Hero, hero_id)
+    hero = session.get(Heroes, hero_id)
     session.delete(hero)
     session.commit()
     return {"message": "Hero deleted"}
