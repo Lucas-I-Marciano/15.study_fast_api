@@ -629,11 +629,16 @@ app.add_middleware(
 
 from sqlmodel import SQLModel, Field, create_engine, Session, select
 
-class Hero(SQLModel, table=True):
-    id: int|None = Field(default=None, primary_key=True)
+class BaseHero(SQLModel):
     name: str = Field(index=True)
     age: int = Field(default=0, index=True)
+
+class Hero(BaseHero, table=True):
+    id: int|None = Field(default=None, primary_key=True)
     secret_name: str 
+
+class PublicHero(BaseHero):
+    id:int
 
 database_name = "database.db"
 database_url = f"sqlite:///{database_name}"
@@ -656,7 +661,6 @@ def get_session():
 
 session_dependency = Annotated[Session, Depends(get_session)] # Help on database management
 
-
 @app.post("/hero", tags=[TagsEnum.hero])
 def create_hero(hero: Hero, session: session_dependency):
     session.add(hero)
@@ -664,7 +668,7 @@ def create_hero(hero: Hero, session: session_dependency):
     session.refresh(hero)
     return hero
 
-@app.get("/hero", tags=[TagsEnum.hero])
+@app.get("/hero", tags=[TagsEnum.hero], response_model=list[PublicHero])
 def get_list_heroes(session: session_dependency):
     heroes = session.exec(select(Hero)).all()
     return heroes
