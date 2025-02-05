@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Path, Body
+from fastapi import APIRouter, Depends, Path, Body, status
 from typing import Annotated
 from api.db.Heroes import PublicHero, BaseHero, HeroCreate, HeroUpdate, Heroes
 
@@ -15,7 +15,7 @@ from sqlmodel import Session, select
 session_dependency = Annotated[Session, Depends(get_session)] # Help on database management
 
 
-@router.post("", response_model=PublicHero)
+@router.post("", response_model=PublicHero, status_code=status.HTTP_201_CREATED)
 def create_hero(hero: HeroCreate, session: session_dependency):
     db_hero = Heroes.model_validate(hero)
     session.add(db_hero)
