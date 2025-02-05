@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Path, Body
+from fastapi import APIRouter, Depends, Path, Body, status
 from typing import Annotated
 from api.db.Heroes import PublicHero, BaseHero, HeroCreate, HeroUpdate, Heroes
 
@@ -15,7 +15,7 @@ from sqlmodel import Session, select
 session_dependency = Annotated[Session, Depends(get_session)] # Help on database management
 
 
-@router.post("/heroes", response_model=PublicHero)
+@router.post("", response_model=PublicHero, status_code=status.HTTP_201_CREATED)
 def create_hero(hero: HeroCreate, session: session_dependency):
     db_hero = Heroes.model_validate(hero)
     session.add(db_hero)
@@ -23,12 +23,12 @@ def create_hero(hero: HeroCreate, session: session_dependency):
     session.refresh(db_hero)
     return db_hero
 
-@router.get("/heroes", response_model=list[PublicHero])
+@router.get("", response_model=list[PublicHero])
 def get_list_heroes(session: session_dependency):
     heroes = session.exec(select(Heroes)).all()
     return heroes
 
-@router.get("/heroes/{hero_id}", response_model=PublicHero)
+@router.get("/{hero_id}", response_model=PublicHero)
 def get_one_hero(
     session: session_dependency,
     hero_id: Annotated[int, Path()],
@@ -39,7 +39,7 @@ def get_one_hero(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not founded")
     return hero
 
-@router.delete("/heroes/{hero_id}")
+@router.delete("/{hero_id}")
 def delete_hero(
     session: session_dependency,
     hero_id: Annotated[int, Path()]
@@ -51,7 +51,7 @@ def delete_hero(
     session.commit()
     return {"message": "Hero deleted"}
 
-@router.patch("/heroes/{hero_id}", response_model=PublicHero)
+@router.patch("/{hero_id}", response_model=PublicHero)
 def update_hero(
     session: session_dependency,
     hero_id: Annotated[int, Path()],
