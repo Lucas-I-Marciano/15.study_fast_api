@@ -1,0 +1,6 @@
+2025-02-05 13:04:31.460413 - Query sended: asdasdasd
+2025-02-05 13:04:31.466411 - asd sent: query=asdasdasd || content:Dear all, thank you all very much
+2025-02-05 13:04:54.200447 - Query sended: SELECT * FROM db
+2025-02-05 13:04:54.209220 - lucas@gmail.com sent: query=SELECT * FROM db || content:Dear all, thank you all very much
+2025-02-05 13:10:16.763918 - Query sended: SELECT * FROM db
+2025-02-05 13:10:16.768107 - lucas@gmail.com sent: query=SELECT * FROM db || content:Dear all, thank you all very much

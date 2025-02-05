@@ -651,3 +651,21 @@ app.include_router(
     tags=["admin"],
     dependencies=[Depends(get_token_header)]
     )
+
+
+
+from fastapi import BackgroundTasks
+from api.utils.create_log import create_log
+
+def get_query(background_task: BackgroundTasks, q:str|None):
+    if q:
+        message = f"Query sended: {q}"
+        background_task.add_task(create_log, message)
+    return q
+
+@app.post("/send-email/{email}")
+def sending_email(email:str, backgroun_task:BackgroundTasks, q:Annotated[str, Depends(get_query)]):
+    email_content = "Dear all, thank you all very much"
+    message_to_log = f"{email} sent: query={q} || content:{email_content}"
+    backgroun_task.add_task(create_log, message_to_log)
+    return {"message": "Done"}
