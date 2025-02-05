@@ -12,4 +12,5 @@ def test_reading_heroes():
 def test_reading_specific_hero():
     response = client.get("/heroes/1")
     assert response.status_code == 200
+    assert list(response.json().keys()) == ['name', 'age', 'id']
 
