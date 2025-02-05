@@ -3,7 +3,76 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
 
-app = FastAPI()
+
+description = """
+## Task Management API - Built with FastAPI
+
+This API was developed as a study of the FastAPI documentation, exploring the main features and functionalities of the framework. The main goal is to provide a set of endpoints to manage tasks, allowing the creation, reading, updating and deletion of tasks.
+
+### Documentation
+
+The interactive API documentation is available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs). Through it, you can explore the endpoints, their parameters, data types and responses, as well as test them directly in the browser.
+
+### API Structure
+
+The API was structured using the following components:
+
+*   **Models:** Definition of the data structures used in the API, such as the representation of a task.
+*   **Endpoints:** Definition of the routes and HTTP methods for each operation (GET, POST, PUT, DELETE).
+*   **Dependencies:** Use of functions to perform repetitive tasks, such as connecting to the database.
+*   **Validations:** Use of tools to ensure the integrity of the data received and sent by the API.
+"""
+
+from enum import Enum
+class TagsEnum(Enum):
+    user = "users"
+    item = "items"
+    dependency = "Dependency"
+    security = "Security"
+    hero = "Hero"
+
+tags_metadata =[
+    {
+        "name": "users",
+        "description": "To study how to deal with login"
+    },
+    {
+        "name": "items",
+        "description": "To study how to deal pydantic model"
+    },
+    {
+        "name": "Dependency",
+        "description": "To study how to use Depends()"
+    },
+    {
+        "name": "Security",
+        "description": "To study how to get use of best practices related to security"
+    },
+    {
+        "name": "Heroes",
+        "description": "To study how to get use of best practices related to table creation and data validation",
+        "externalDocs": {
+            "description" : "FastAPI documentation",
+            "url" : "https://fastapi.tiangolo.com/tutorial/sql-databases/"
+        }
+    },
+] 
+app = FastAPI(
+    title="Studying FastAPI",
+    summary="First API with FastAPI to Study documentation",
+    description=description,
+    version="1.0.0",
+    terms_of_service="http://example.com/terms/",
+    contact={
+        "name": ": Lucas Ioran Marciano",
+        "email": "lucas.marciano99@outlook.com"
+    },
+    license_info={
+        "name": "Apache 2.0",
+        "identifier": "MIT",
+    },
+    openapi_tags = tags_metadata,
+)
 
 from typing import Annotated
 from fastapi import Header, Depends
@@ -49,14 +118,9 @@ def read_user_me():
 def read_user(user_id :str):
     return {"user_id": user_id}
 
-from enum import Enum
 
-class TagsEnum(Enum):
-    user = "users"
-    item = "items"
-    dependency = "Dependency"
-    security = "Security"
-    hero = "Hero"
+
+
 
 class ModelName(str, Enum):
     #<name> = <value>
