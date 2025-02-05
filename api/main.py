@@ -72,8 +72,6 @@ app = FastAPI(
         "identifier": "MIT",
     },
     openapi_tags = tags_metadata,
-    docs_url="/documentation",
-    redoc_url=None
 )
 
 from typing import Annotated
