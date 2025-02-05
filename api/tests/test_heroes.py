@@ -14,3 +14,11 @@ def test_reading_specific_hero():
     assert response.status_code == 200
     assert list(response.json().keys()) == ['name', 'age', 'id']
 
+def test_creating_hero():
+    json_hero = {"name": "Superman","age": 33,"secret_name": "Clark Kent"}
+    response = client.post(
+        "/heroes",
+        json=json_hero
+    )
+    assert response.status_code == 201
+    assert list(response.json().keys()) == ['name', 'age', 'id']
