@@ -22,3 +22,12 @@ def test_creating_hero():
     )
     assert response.status_code == 201
     assert list(response.json().keys()) == ['name', 'age', 'id']
+
+def test_failed_creation():
+    json_hero = {"names": "Superman","ages": 33,"secret_names": "Clark Kent"}
+    response = client.post(
+        "/heroes",
+        json=json_hero
+    )
+    assert response.status_code == 422
+    assert list(response.json().keys()) == ["detail"]
