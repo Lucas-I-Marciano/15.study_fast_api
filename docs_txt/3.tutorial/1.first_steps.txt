@@ -1,0 +1,27 @@
+First Steps
+    Schema
+        A "schema" is a definition or description of something
+    API "schema"
+        Is a specification that dictates how to define a schema of your API.
+        This schema definition includes your API paths, the possible parameters they take, etc
+    Data "schema"
+        The term "schema" might also refer to the shape of some data, like a JSON content.
+
+    Recap
+        Step 1: import FastAPI
+            from fastapi import FastAPI
+        Step 2: create a FastAPI "instance"
+            app = FastAPI()
+        Step 3: create a path operation
+            @app.get("/")
+        Step 4: define the path operation function
+            async def root(): --> the function below the "decorator" (below @app.get("/"))
+        Step 5: return the content
+            return {"message": "Hello World"}
+
+Path Parameters
+    @app.get("/items/{item_id}")
+    All the data validation is performed under the hood by Pydantic
+    Predefined values
+        You want the possible valid path parameter values to be predefined, you can use a standard Python Enum
+            

@@ -1,0 +1,30 @@
+Query Parameters
+    Query parameter type conversion
+        async def read_item(item_id: str, q: str | None = None, short: bool = False)
+        You can define short as (1, True, true, on, yes...)
+    when you want to make a query parameter required, you can just not declare any default value
+
+Request Body
+    If the parameter is also declared in the path, it will be used as a path parameter.
+    If the parameter is of a singular type (like int, float, str, bool, etc) it will be interpreted as a query parameter.
+    If the parameter is declared to be of the type of a Pydantic model, it will be interpreted as a request body.
+    Or I could do it explicit as a Body
+        from typing import Annotated
+        async def update_item(
+            item_id: int, item: Item, user: User, importance: Annotated[int, Body()]
+        ):
+
+Query Parameters and String Validations
+    At a glance, using Query class from fastapi
+        def read_items(q: Annotated[str | None, Query(max_length=50)] = None)
+        def read_items(q: str | None = Query(default=None, max_length=50))
+    
+    Query parameter list / multiple values
+        def read_items(q: Annotated[list[str] | None, Query()] = None)
+            url: http://localhost:8000/items/?q=foo&q=bar
+
+Declare more metadata
+    You can add a title -> async def read_items(q: Annotated[str | None, Query(title="Query string", min_length=3)] = None,):
+    Alias: Imagine that you want the parameter to be item-query, but item-query is not a valid Python variable name
+        Desire: http://127.0.0.1:8000/items/?item-query=foobaritems
+        Problem-solving: Use alias method of Query() class

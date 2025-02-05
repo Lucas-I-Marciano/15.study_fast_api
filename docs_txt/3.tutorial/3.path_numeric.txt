@@ -1,0 +1,6 @@
+Path Parameters and Numeric Validations
+    The same of Query
+
+Query Parameter Models
+    You can use Pydantic models to declare query parameters in FastAPI
+    This would allow you to re-use the model in multiple places and also to declare validations and metadata for all the parameters at once

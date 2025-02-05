@@ -1,0 +1,14 @@
+Body - Multiple Parameters
+    Multiple body parameters
+        If one body is expected, body expect to be the attributes of a model
+        If two+ is expected, the item was declared the same way as before, it is now expected to be inside of the body with a key item.
+            One: {"name": "Foo","description": "The pretender","price": 42.0,"tax": 3.2}
+            Two: {
+                "item": {"name": "Foo","description": "The pretender","price": 42.0,"tax": 3.2},
+                "user": {"username": "dave","full_name": "Dave Grohl"}
+            }
+    
+Declare Request Example Data
+    Three ways to do it 
+        On model (two ways), on Body() function
+            Model: model_config = {"json_schema_extra" : {"examples" : [ ... --> Remember to pass as a list

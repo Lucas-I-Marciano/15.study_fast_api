@@ -1,0 +1,16 @@
+Dependency Injection
+    There is a way for your code (in this case, your path operation functions) to declare things that it requires to work and use: "dependencies"
+    And then, that system will take care of doing whatever is needed to provide your code with those needed dependencies ("inject" the dependencies)
+
+Classes as Dependencies
+    What FastAPI actually checks is that it is a "callable" (function, class or anything else) and the parameters defined
+
+Sub-dependencies
+    You can create dependencies that have sub-dependencies. They can be as deep as you need them to be
+
+Dependencies in path operation decorators
+    You can run it without returnin any value -> 'dependencies' param on decorator function
+    Dependencies errors and return values  
+
+Global Dependencies
+    Applied to all the path operations in the application
